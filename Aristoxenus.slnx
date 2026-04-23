@@ -1,8 +1,9 @@
 <Solution>
   <Folder Name="/Solution Items/">
     <File Path=".editorconfig" />
+    <File Path="README.md" />
   </Folder>
-  <Project Path="Aristoxenus/Aristoxenus.csproj" />
-  <Project Path="AristoxenusCLI/AristoxenusCLI.csproj" />
-  <Project Path="AristoxenusTests/AristoxenusTests.csproj" Id="346e5f7d-03f4-46de-91f8-8dfc3c5564c7" />
+  <Project Path="Aristoxenus.CommandLine/Aristoxenus.CommandLine.csproj" />
+  <Project Path="Aristoxenus.Core/Aristoxenus.Core.csproj" />
+  <Project Path="Aristoxenus.Tests/Aristoxenus.Tests.csproj" />
 </Solution>
