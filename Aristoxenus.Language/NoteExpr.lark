@@ -1,0 +1,40 @@
+%import common.WS
+%ignore WS
+
+start: (note_expr)*
+note_expr: simple_note | tuplet_expr 
+simple_note: note_name duration?
+note_name: /[abcdefgABCDEFG](#+|b+)?('|,)?/
+duration: /\d+/
+
+
+// The simplest case, a triplet of notes, is easy:
+
+//	(3 FGA
+
+// This means the 3 notes FGA in the time of two notes. Note that 
+// there's no ) at the end, and spaces are irrelevant. For this 
+// simple case, the 3 notes should have the same length.
+// ABC can represent general n-tuplets using the syntax: 
+
+//	(p:q:r ...
+
+// This means "put p notes into the time of q for the next r notes." 
+// There are a few special cases. If r is missing, it defaults to p. 
+// For example: If q is missing, it defaults to [undocumented at present].
+
+// Note that music formatting programs actually ignore the q value, 
+// though it is used by music playing programs to determine how long 
+// the p notes should take. A formatting program should produce the 
+// usual "bracket" marking the next r notes, and put the number p above or inside the bracket.
+
+// Special cases:
+
+// 	(3::2 = (3:2:2
+// 	(3    = (3:2:3
+
+tuplet_expr: "(" tuplet_duration 
+tuplet_duration: tuplet_numerator tuplet_denominator
+tuplet_numerator: /\d+/
+tuplet_denominator:  /:\d*/ tuplet_selector?
+tuplet_selector:  /:\d+/

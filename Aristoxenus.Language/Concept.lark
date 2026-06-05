@@ -1,0 +1,136 @@
+%import common.WS
+%import common.CNAME
+%ignore WS
+start: aristoxenus_block
+
+aristoxenus_block: line_declaration
+
+line_declaration: "line"i CNAME duration_expr "->" target_expr pattern_block
+pattern_block: "{" pattern_expr+ "}"
+duration_expr: /\d+/ "/" /\d+/ 
+pattern_expr: "..." | comment
+target_expr: "[" note_name (":" chord_symbol? (":" scale_name)?)? "]"
+
+scale_name: simple_scale_name
+simple_scale_name: IONIAN | DORIAN | PHRYGIAN | LYDIAN |MIXOLYDIAN | AEOLIAN | LOCRIAN
+IONIAN: "ionian"i
+DORIAN: "dorian"i
+PHRYGIAN: "phrygian"i 
+LYDIAN: "lydian"i
+MIXOLYDIAN: "mixolydian"i
+AEOLIAN: "aeolian"i
+LOCRIAN: "locrian"i
+
+
+comment:  /\/\/[^\n]*/
+
+
+chord_symbol: (note_name | roman_root) _chordform
+     | note_name _chordform "/" bass 
+
+note_name: _letter_name _accidental*
+roman_root: _accidental* _roman_numeral
+
+
+_chordform: _type altered_extension* alt5? add* no*
+slash_chord: 
+bass: note_name
+_type: major 
+     | minor 
+     | suspended
+     | half_diminished
+     | diminished 
+     | augmented 
+     | dominant
+     | altered
+
+major: SIX? alt5?
+     | _maj SIX? alt5?
+     | maj7_extension alt5?
+minor: _min (b7_extension | maj7_extension | SIX)?
+suspended: (b7_extension | maj7_extension | SIX)? sus
+diminished: _dim (bb7_extension | maj7_extension)?
+          | _min "b5" 
+augmented: _aug (b7_extension | maj7_extension)?
+         | (b7_extension | maj7_extension | SIX) (_aug | "#5")
+half_diminished: _min b7_extension "b5"
+               | _halfdim b7_extension?
+dominant: b7_extension alt5?
+altered: "alt" b7_extension?
+   | b7_extension "alt"
+
+
+alt5: SH5 | FL5
+SH5: "#5" 
+FL5: "b5"
+b7_extension: (SEVEN | NINE | ELEVEN | THIRTEEN)
+bb7_extension: (SEVEN | NINE | ELEVEN | THIRTEEN)
+maj7_extension: _maj (SEVEN | NINE | ELEVEN | THIRTEEN)
+sus: "sus" (TWO | FOUR | "bb" THREE | "#" THREE) 
+altered_extension: _accidental+ NUMBER
+add: "add" _accidental* (NUMBER | FIVE | THREE)
+no: "no" _accidental* (NUMBER | FIVE | THREE)
+_accidental: SHARP
+          | FLAT
+SHARP: "#"
+FLAT: "b"
+NUMBER: TWO
+      | FOUR
+      | SIX
+      | SEVEN
+      | NINE
+      | ELEVEN
+      | THIRTEEN
+TWO: "2"
+THREE: "3"
+FOUR: "4"
+FIVE: "5"
+SIX: "6"
+SEVEN: "7"
+NINE: "9"
+ELEVEN: "11"
+THIRTEEN: "13"
+_letter_name: A
+           | B
+           | C
+           | D
+           | E 
+           | F
+           | G
+A: "A"
+B: "B"
+C: "C"
+D: "D"
+E: "E"
+F: "F"
+G: "G"
+_roman_numeral: I | II | III | IV | V | VI | VII
+I: "I" | "i"
+II: "II" | "ii"
+III: "III" | "iii"
+IV: "IV" | "iv"
+V: "V" | "v"
+VI: "VI" | "vi"
+VII: "VII" | "vii"
+
+_maj: _MAJ
+   | _M_UPPER
+   | _DELTA
+_min: _MIN
+   | _M_LOWER
+   | _MINUS
+_dim: _DIM
+_halfdim: _OE
+_aug: _AUG
+   | _PLUS
+_M_UPPER: "M"
+_MAJ: "maj"
+_DELTA: "Δ"
+_MIN: "min"
+_M_LOWER: "m"
+_MINUS: "-"
+_DIM: "dim"
+    | "o"
+_OE: "ø"
+_AUG: "aug"
+_PLUS: "+"

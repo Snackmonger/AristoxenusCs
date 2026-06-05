@@ -1,5 +1,5 @@
-﻿using Aristoxenus.Core.Domain.Theory;
-using Aristoxenus.Core.SharedKernel.Bases;
+﻿using Aristoxenus.Core.Domains.Theory.Atoms;
+
 namespace Aristoxenus.Tests
 {
     [TestClass]
@@ -11,7 +11,7 @@ namespace Aristoxenus.Tests
         [DataRow(16)]
         public void CreateNew_IllegalNumber_ThrowsOnIllegalValue(int value)
         {
-            Assert.Throws<DomainException>(() => Degree.CreateNew(value));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new Degree(value));
         }
 
         [TestMethod]
@@ -20,17 +20,9 @@ namespace Aristoxenus.Tests
         [DataRow("16")]
         public void FromSymbol_IllegalString_ThrowsOnIllegalValue(string value)
         {
-            Assert.Throws<DomainException>(() => Degree.FromSymbol(value));
+            Assert.Throws<ArgumentOutOfRangeException>(() => Degree.FromSymbol(value));
         }
 
-        [TestMethod]
-        [DataRow("-1")]
-        [DataRow("0")]
-        [DataRow("16")]
-        public void CreateNew_IllegalString_ThrowsOnIllegalValue(string value)
-        {
-            Assert.Throws<DomainException>(() => Degree.CreateNew(value));
-        }
 
         [TestMethod]
         [DataRow(3, 3)]
@@ -39,7 +31,7 @@ namespace Aristoxenus.Tests
         [DataRow(13, 6)]
         public void FirstOctaveValue_Property_GeneratesCorrectValue(int degreeValue, int expectedFirstOctave)
         {
-            Assert.AreEqual(expectedFirstOctave, Degree.CreateNew(degreeValue).FirstOctaveValue);
+            Assert.AreEqual(expectedFirstOctave, new Degree(degreeValue).FirstOctaveValue);
         }
 
         [TestMethod]
@@ -49,7 +41,7 @@ namespace Aristoxenus.Tests
         [DataRow(10, 10)]
         public void SecondOctaveValue_Property_GeneratesCorrectValue(int degreeValue, int expectedSecondOctave)
         {
-            Assert.AreEqual(expectedSecondOctave, Degree.CreateNew(degreeValue).SecondOctaveValue);
+            Assert.AreEqual(expectedSecondOctave, new Degree(degreeValue).SecondOctaveValue);
         }
 
         [TestMethod]
@@ -59,7 +51,7 @@ namespace Aristoxenus.Tests
         [DataRow(13, "13")]
         public void Symbol_Property_GeneratesCorrectValue(int degreeValue, string expectedSymbol)
         {
-            Assert.AreEqual(expectedSymbol, Degree.CreateNew(degreeValue).ToSymbol());
+            Assert.AreEqual(expectedSymbol, new Degree(degreeValue).ToSymbol());
         }
 
         [TestMethod]
@@ -68,7 +60,7 @@ namespace Aristoxenus.Tests
         [DataRow(7, "VII")]
         public void Roman_Property_GeneratesCorrectValue(int degreeValue, string expectedRoman)
         {
-            Assert.AreEqual(expectedRoman, Degree.CreateNew(degreeValue).Roman);
+            Assert.AreEqual(expectedRoman, new Degree(degreeValue).Roman);
         }
 
         [TestMethod]
@@ -77,7 +69,7 @@ namespace Aristoxenus.Tests
         [DataRow(7, "seven")]
         public void Cardinal_Property_GeneratesCorrectValue(int degreeValue, string expectedCardinal)
         {
-            Assert.AreEqual(expectedCardinal, Degree.CreateNew(degreeValue).Cardinal);
+            Assert.AreEqual(expectedCardinal, new Degree(degreeValue).Cardinal);
         }
 
         [TestMethod]
@@ -86,7 +78,7 @@ namespace Aristoxenus.Tests
         [DataRow(7, "seventh")]
         public void Ordinal_Property_GeneratesCorrectValue(int degreeValue, string expectedOrdinal)
         {
-            Assert.AreEqual(expectedOrdinal, Degree.CreateNew(degreeValue).Ordinal);
+            Assert.AreEqual(expectedOrdinal, new Degree(degreeValue).Ordinal);
         }
     }
 }

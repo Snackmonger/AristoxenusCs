@@ -1,0 +1,67 @@
+//
+// Declare a line in 4/4 with 22 8th notes 
+// worth of duration leading to a high C note.
+//
+// Lines have to conform to their declared form(s) so they can be reliably
+// transposed in time and pitch space!
+//
+// Lines declare where they are heading, so the compiler tries to match
+// potential lines with the amount of available space before the next
+// target note in the melodic outline.
+//
+line lineBasicsLesson 22/8 -> [c] { 
+
+	//
+	// If the described line does not conform 
+	// with the declared duration, compiler rejects.
+	//
+	// The notation is like folk music ABC notation,
+	// Where ABCDEFG are mid octave abcdefg are high,
+	// and we go even higher or lower by adding ' and , 
+	//
+
+	// Base duration is declared to be 1/8 (in line's total duration 22/8)
+	C D				// 1/8 + 1/8
+					// Total 2/8
+	
+	// Plain numbers represent multiples of the base duration
+	E2 f2 E2		// 2/8 (= 1/4) + 2/8 + 2/8
+					// Total 8/8
+	
+	// Barlines are for user's convenience 
+	// (ignored by compiler? so lines can fit syncopations?)
+	| G4 A4			// 4/8 + 4/8
+					// Total 16/8
+	
+	// Slashed numbers represent divisions of the base duration
+	| B4			// 4/8
+	c/2 d/2 e/2 f/2 // 0.5/8 (= 1/16) + 0.5/8 + 0.5/8 + 0.5/8
+					// Total 22/8
+	g/2				// 2/8					
+					// ERROR: Duration is 24/8
+}
+
+//
+// A line might declare not only that it heads towards a target note,
+// but also a target tonality.
+//
+line lineTargetExample1 8/8 in 4/4 -> [c:major] { ... }
+
+//
+// And this tonality can be a scale or a chord symbol...
+//
+line lineTargetExample2 8/8 in 4/4 -> [c::Cmin7] { ... }
+
+// 
+// Or both a scale and a particular chord within that scale.
+//
+// The compiler will assign weights to lines based on these declarations,
+// which will be used to decide how appropriate lines are to the target
+// context (which might be defined in terms of note, chord, or scale).
+//
+// This means that a line that declares it targets c as Cmin7 in the Dorian
+// scale might actually be matched with a context that only requires
+// that the target note is c (and the following scale/chord elements 
+// could be anything).
+//
+line lineTargetExample2 8/8 in 4/4 -> [c:dorian:Cmin7] { ... }

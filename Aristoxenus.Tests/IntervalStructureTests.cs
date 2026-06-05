@@ -1,6 +1,8 @@
-﻿using Aristoxenus.Core.Constants;
-using Aristoxenus.Core.Domain.Theory;
-using Aristoxenus.Core.SharedKernel.Bases;
+﻿using Aristoxenus.Core.Shared.Bases;
+using Aristoxenus.Core.Shared.Data;
+
+using Aristoxenus.Core.Domains.Theory.Atoms;
+using Aristoxenus.Core.Domains.Theory.Harmony;
 
 namespace Aristoxenus.Tests
 {
@@ -8,9 +10,9 @@ namespace Aristoxenus.Tests
     public sealed class IntervalStructureTests
     {
         public Interval[] IllegalIntervalSet => [
-            Interval.CreateNew(2, 1),
-            Interval.CreateNew(3, -1),
-            Interval.CreateNew(4, 0)
+            Interval.FromIntervalName(2, 1),
+            Interval.FromIntervalName(3, -1),
+            Interval.FromIntervalName(4, 0)
         ];
 
         public string[] DiatonicSymbols => [
@@ -23,19 +25,19 @@ namespace Aristoxenus.Tests
             Symbols.Seven];
 
         public Interval[] DiatonicScale => [
-            Interval.CreateNew(1, 0),
-            Interval.CreateNew(2, 0),
-            Interval.CreateNew(3, 0),
-            Interval.CreateNew(4, 0),
-            Interval.CreateNew(5, 0),
-            Interval.CreateNew(6, 0),
-            Interval.CreateNew(7, 0)];
+            Interval.FromIntervalName(1, 0),
+            Interval.FromIntervalName(2, 0),
+            Interval.FromIntervalName(3, 0),
+            Interval.FromIntervalName(4, 0),
+            Interval.FromIntervalName(5, 0),
+            Interval.FromIntervalName(6, 0),
+            Interval.FromIntervalName(7, 0)];
 
         [TestMethod]
         public void CreateNew_ValidIntervalArrayOrStringArray_ObjectsCreatedAreEquivalent()
         {
-            var structure_1 = IntervalStructure.CreateNew(DiatonicSymbols);
-            var structure_2 = IntervalStructure.CreateNew(DiatonicScale);
+            var structure_1 = IntervalStructure.FromIntervalSymbols(DiatonicSymbols);
+            var structure_2 = new IntervalStructure(DiatonicScale);
             Assert.AreEqual(structure_1, structure_2);
         }
 
@@ -43,11 +45,11 @@ namespace Aristoxenus.Tests
         public void CreateNew_IllegalParams_ThrowsOnIllegalValue()
         {
             Assert.Throws<DomainException>(
-                () => IntervalStructure.CreateNew(IllegalIntervalSet)
+                () => new IntervalStructure(IllegalIntervalSet)
             );
 
             Assert.Throws<DomainException>(
-                () => IntervalStructure.CreateNew(IllegalIntervalSet.Select(i => i.Name.ToSymbol()))
+                () => IntervalStructure.FromIntervalSymbols(IllegalIntervalSet.Select(i => i.Name.ToSymbol()))
             );
         }
 
@@ -126,7 +128,7 @@ namespace Aristoxenus.Tests
         [DataRow(new[] { "1", "4", "5", "b7" }, "7sus4")]
         public void ToChordSymbol_DefaultStyling_ReturnsCorrectSymbol(string[] intervals, string expectedChordSymbol)
         {
-            Assert.AreEqual(expectedChordSymbol, IntervalStructure.CreateNew(intervals).ToChordSymbol());
+            Assert.AreEqual(expectedChordSymbol, IntervalStructure.FromIntervalSymbols(intervals).ToChordSymbol());
         }
 
         [TestMethod]
@@ -137,7 +139,7 @@ namespace Aristoxenus.Tests
         [DataRow(new[] { "1", "3", "5", "b7", "b9" }, true)]
         public void IsDominant_DominantStructure_ReturnsTrue(string[] intervals, bool expectedIsDominant)
         {
-            Assert.IsTrue(IntervalStructure.CreateNew(intervals).IsDominant);
+            Assert.IsTrue(IntervalStructure.FromIntervalSymbols(intervals).IsDominant);
         }
 
         [TestMethod]
@@ -148,7 +150,7 @@ namespace Aristoxenus.Tests
         [DataRow(["1", "3", "5", "7", "b9"])]
         public void IsDominant_NonDominantStructure_ReturnsFalse(string[] intervals)
         {
-            Assert.IsFalse(IntervalStructure.CreateNew(intervals).IsDominant);
+            Assert.IsFalse(IntervalStructure.FromIntervalSymbols(intervals).IsDominant);
         }
 
         [TestMethod]
@@ -158,7 +160,7 @@ namespace Aristoxenus.Tests
         [DataRow(["1", "b3", "b5", "bb7", "b9"])]
         public void IsDiminished_DiminishedStructure_ReturnsTrue(string[] intervals)
         {
-            Assert.IsTrue(IntervalStructure.CreateNew(intervals).IsDiminished);
+            Assert.IsTrue(IntervalStructure.FromIntervalSymbols(intervals).IsDiminished);
         }
 
         [TestMethod]
@@ -169,19 +171,19 @@ namespace Aristoxenus.Tests
         [DataRow(["1", "b3", "5", "bb7", "b9"])]
         public void IsDiminished_NonDiminishedStructure_ReturnsFalse(string[] intervals)
         {
-            Assert.IsFalse(IntervalStructure.CreateNew(intervals).IsDiminished);
+            Assert.IsFalse(IntervalStructure.FromIntervalSymbols(intervals).IsDiminished);
         }
 
         [TestMethod]
         public void IsSupersetOf_ValidSuperset_ReturnsTrue()
         {
-            Assert.IsTrue(IntervalStructure.CreateNew(["1", "3", "5", "b7", "9", "13"]).IsSupersetOf(["1", "3", "5"]));
+            Assert.IsTrue(IntervalStructure.FromIntervalSymbols(["1", "3", "5", "b7", "9", "13"]).IsSupersetOf(["1", "3", "5"]));
         }
 
         [TestMethod]
         public void IsSubsetOf_ValidSubset_ReturnsTrue()
         {
-            Assert.IsTrue(IntervalStructure.CreateNew(["1", "3", "5"]).IsSubsetOf(["1", "3", "5", "b7", "9", "13"]));
+            Assert.IsTrue(IntervalStructure.FromIntervalSymbols(["1", "3", "5"]).IsSubsetOf(["1", "3", "5", "b7", "9", "13"]));
         }
 
         [TestMethod]
@@ -189,7 +191,7 @@ namespace Aristoxenus.Tests
         [DataRow(["1", "b3", "5"])]
         public void HasPerfectFifth_PerfectFifthStructure_ReturnsTrue(string[] intervals)
         {
-            Assert.IsTrue(IntervalStructure.CreateNew(intervals).HasPerfectFifth);
+            Assert.IsTrue(IntervalStructure.FromIntervalSymbols(intervals).HasPerfectFifth);
         }
 
         [TestMethod]
@@ -197,7 +199,7 @@ namespace Aristoxenus.Tests
         [DataRow(["1", "3", "#5"])]
         public void HasPerfectFifth_NonPerfectFifthStructure_ReturnsFalse(string[] intervals)
         {
-            Assert.IsFalse(IntervalStructure.CreateNew(intervals).HasPerfectFifth);
+            Assert.IsFalse(IntervalStructure.FromIntervalSymbols(intervals).HasPerfectFifth);
         }
 
         [TestMethod]
@@ -205,7 +207,7 @@ namespace Aristoxenus.Tests
         [DataRow(["1", "3", "#5"])]
         public void HasAlteredFifth_AlteredFifthStructure_ReturnsTrue(string[] intervals)
         {
-            Assert.IsTrue(IntervalStructure.CreateNew(intervals).HasAlteredFifth);
+            Assert.IsTrue(IntervalStructure.FromIntervalSymbols(intervals).HasAlteredFifth);
         }
 
         [TestMethod]
@@ -213,7 +215,7 @@ namespace Aristoxenus.Tests
         [DataRow(["1", "b3", "5"])]
         public void HasAlteredFifth_NonAlteredFifthStructure_ReturnsFalse(string[] intervals)
         {
-            Assert.IsFalse(IntervalStructure.CreateNew(intervals).HasAlteredFifth);
+            Assert.IsFalse(IntervalStructure.FromIntervalSymbols(intervals).HasAlteredFifth);
         }
 
         [TestMethod]

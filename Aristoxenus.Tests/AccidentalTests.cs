@@ -1,5 +1,4 @@
-using Aristoxenus.Core.Domain.Theory;
-using Aristoxenus.Core.SharedKernel.Bases;
+using Aristoxenus.Core.Domains.Theory.Atoms;
 
 namespace Aristoxenus.Tests;
 
@@ -10,9 +9,9 @@ public class AccidentalTests
     [DataRow(0)]
     [DataRow(1)]
     [DataRow(-1)]
-    public void CreateNew_SingleNumber_DifferentInstancesTestEqualWithSameValues(int value)
+    public void NewObject_SingleNumber_DifferentInstancesTestEqualWithSameValues(int value)
     {
-        Assert.AreEqual(Accidental.CreateNew(value), Accidental.CreateNew(value));
+        Assert.AreEqual<Accidental>(new(value), new(value));
     }
 
     [TestMethod]
@@ -20,9 +19,9 @@ public class AccidentalTests
     [DataRow(-16)]
     [DataRow(23)]
     [DataRow(-343)]
-    public void CreateNew_IllegalNumber_ThrowsOnIllegalValue(int value)
+    public void NewObject_IllegalNumber_ThrowsOnIllegalValue(int value)
     {
-        Assert.Throws<DomainException>(() => Accidental.CreateNew(value));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new Accidental(value));
     }
 
     [TestMethod]
@@ -31,9 +30,9 @@ public class AccidentalTests
     [DataRow(-1, "b")]
     [DataRow(-2, "bb")]
     [DataRow(2, "##")]
-    public void CreateNew_ValidStringOrInteger_DifferentInstancesTestEqualWithEquivalentValuesOfDifferentTypes(int value, string symbol)
+    public void FromSymbol_ValidStringOrInteger_DifferentInstancesTestEqualWithEquivalentValuesOfDifferentTypes(int value, string symbol)
     {
-        Assert.AreEqual(Accidental.CreateNew(value), Accidental.FromSymbol(symbol));
+        Assert.AreEqual(new(value), Accidental.FromSymbol(symbol));
     }
 
     [TestMethod]
@@ -42,9 +41,9 @@ public class AccidentalTests
     [DataRow(-1, "b")]
     [DataRow(-2, "bb")]
     [DataRow(2, "##")]
-    public void Symbol_Property_GeneratesCorrectSymbolForValue(int value, string expectedSymbol)
+    public void ToSymbol_ValidState_GeneratesCorrectSymbolForValue(int value, string expectedSymbol)
     {
-        Assert.AreEqual(expectedSymbol, Accidental.CreateNew(value).ToSymbol());
+        Assert.AreEqual(expectedSymbol, new Accidental(value).ToSymbol());
     }
 
     [TestMethod]
@@ -59,6 +58,6 @@ public class AccidentalTests
     [DataRow(7, "septuple sharp")]
     public void Name_Property_GeneratesCorrectNameForValue(int value, string expectedName)
     {
-        Assert.AreEqual(expectedName, Accidental.CreateNew(value).Name);
+        Assert.AreEqual(expectedName, new Accidental(value).Name);
     }
 }
