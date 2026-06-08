@@ -16,13 +16,13 @@ public partial class RegularExpressions
     public static readonly Regex ChordSymbol = ChordSymbolRegex();
     public static readonly Regex RootlessChordSymbol = RootlessChordSymbolRegex();
 
-    [GeneratedRegex(RegExString.NoteName)]
+    [GeneratedRegex(RawRegExString.NoteName)]
     private static partial Regex NoteNameRegex();
 
-    [GeneratedRegex($@"{RegExString.NoteName}([0-8])")]
+    [GeneratedRegex($@"{RawRegExString.NoteName}([0-8])")]
     private static partial Regex PitchSymbolRegex();
 
-    [GeneratedRegex(RegExString.IntervalSymbol)]
+    [GeneratedRegex(RawRegExString.IntervalSymbol)]
     private static partial Regex IntervalSymbolRegex();
 
     [GeneratedRegex(Symbols.Sharp)]
@@ -31,9 +31,9 @@ public partial class RegularExpressions
     [GeneratedRegex(Symbols.Flat)]
     private static partial Regex FlatSymbolRegex();
 
-    [GeneratedRegex($@"^{RegExString.ChordRootName}{RegExString.ChordMainSymbol}?{RegExString.ChordExtension}?{RegExString.ChordModification}?$")]
+    [GeneratedRegex($@"^{RawRegExString.ChordRootName}{RawRegExString.ChordMainSymbol}?{RawRegExString.ChordExtension}?{RawRegExString.ChordModification}?$")]
     private static partial Regex ChordSymbolRegex();
 
-    [GeneratedRegex($@"^{RegExString.ChordMainSymbol}?{RegExString.ChordExtension}?{RegExString.ChordModification}?$")]
+    [GeneratedRegex($@"^{RawRegExString.ChordMainSymbol}?{RawRegExString.ChordExtension}?{RawRegExString.ChordModification}?$")]
     private static partial Regex RootlessChordSymbolRegex();
 }

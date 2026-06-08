@@ -1,47 +1,18 @@
-﻿namespace Aristoxenus.Core.Shared.Bases
+﻿
+namespace Aristoxenus.Core.Shared.Bases;
+
+public abstract class ValueObject : IEquatable<ValueObject>
 {
-    /// <summary>
-    /// Simple base class for making value objects with custom equality checks.
-    /// </summary>
-    public abstract class ValueObject
-    {
-        protected static bool EqualOperator(ValueObject left, ValueObject right)
-        {
-            if (left is null ^ right is null)
-            {
-                return false;
-            }
-            return left is null || left.Equals(right);
-        }
+    protected abstract IEnumerable<object?> GetEqualityComponents();
 
-        protected static bool NotEqualOperator(ValueObject left, ValueObject right)
-        {
-            return !(EqualOperator(left, right));
-        }
-        protected abstract IEnumerable<object> GetEqualityComponents();
+    public override bool Equals(object? obj) => obj is ValueObject other && Equals(other);
 
-        public override bool Equals(object? obj)
-        {
-            if (obj == null || obj.GetType() != GetType())
-            {
-                return false;
-            }
+    public bool Equals(ValueObject? other) =>
+        other is not null && GetEqualityComponents().SequenceEqual(other.GetEqualityComponents());
 
-            var other = (ValueObject)obj;
+    public override int GetHashCode() =>
+        GetEqualityComponents().Select(x => x?.GetHashCode() ?? 0).Aggregate(HashCode.Combine);
 
-            return GetEqualityComponents().SequenceEqual(other.GetEqualityComponents());
-        }
-
-        public override int GetHashCode()
-        {
-            return GetEqualityComponents()
-                .Select(x => x != null ? x.GetHashCode() : 0)
-                .Aggregate((x, y) => x ^ y);
-        }
-
-        public ValueObject GetCopy()
-        {
-            return (ValueObject)MemberwiseClone();
-        }
-    }
+    public static bool operator ==(ValueObject? l, ValueObject? r) => Equals(l, r);
+    public static bool operator !=(ValueObject? l, ValueObject? r) => !Equals(l, r);
 }

@@ -1,4 +1,4 @@
-﻿using Aristoxenus.Core.Domains.Theory.Atoms;
+﻿using Aristoxenus.Core.Domains.Theory.Models;
 using Aristoxenus.Core.Shared.Bases;
 
 namespace Aristoxenus.Core.Domains.Theory.Interfaces

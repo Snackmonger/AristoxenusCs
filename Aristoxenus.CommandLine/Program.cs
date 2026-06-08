@@ -1,14 +1,17 @@
 ﻿
-using Aristoxenus.Core.Domains.Theory.Atoms;
-using Aristoxenus.Core.Domains.Theory.Melody;
+using Aristoxenus.Core.Domains.Theory.Models;
+using Aristoxenus.Core.Shared.Utilities;
 
 public static class Program
 {
     public static void Main()
     {
-        var noteName = NoteName.FromSymbol("A##");
-        var interval = Interval.FromSymbol("#5");
-        var result = noteName.NoteNameAbove(interval);
+        var name = NoteName.FromSymbol("A");
+        var scale = NomenclatureHelper.CalculateHeptatonicNames((5, 0), [0, 2, 4, 5, 7, 9, 11]);
+        foreach (var note in scale)
+        {
+            Console.WriteLine(SymbolHelper.CreateNoteNameSymbol(note));
+        }
     }
     public static void Something()
     {

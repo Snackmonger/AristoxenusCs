@@ -1,4 +1,5 @@
-using Aristoxenus.Core.Domains.Theory.Atoms;
+using Aristoxenus.Core.Shared.Data;
+using Aristoxenus.Core.Shared.Utilities;
 
 namespace Aristoxenus.Tests;
 
@@ -16,13 +17,8 @@ public class ScaleTests
         int modeIndex,
         IEnumerable<int> expectedPattern)
     {
-        var result = ScalePattern.Diatonic.Mode(modeIndex);
-        Assert.IsTrue(Enumerable
-            .SequenceEqual(
-                expectedPattern,
-                result
-            )
-        );
+        var result = PatternHelper.GetModeOfIntervalPattern(RawScalePatterns.Diatonic, modeIndex);
+        Assert.IsTrue(Enumerable.SequenceEqual(expectedPattern, result));
     }
 
     [TestMethod]
@@ -35,12 +31,7 @@ public class ScaleTests
     int modeIndex,
     IEnumerable<int> expectedPattern)
     {
-        var result = ScalePattern.Diatonic.Mode(modeIndex);
-        Assert.IsTrue(Enumerable
-            .SequenceEqual(
-                expectedPattern,
-                result
-            )
-        );
+        var result = PatternHelper.GetModeOfIntervalPattern(RawScalePatterns.Diatonic, modeIndex);
+        Assert.IsTrue(Enumerable.SequenceEqual(expectedPattern,result));
     }
 }
