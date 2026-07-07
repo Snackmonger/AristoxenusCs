@@ -67,15 +67,21 @@ public class IntervalStructure : ValueObject, IReadOnlySet<Interval>, ISymbolSer
         HasAlteredFifth = false;
         foreach ((int Degree, int Accidental) interval in Intervals)
         {
-            if (interval == RawIntervals.MajorThird || interval == RawIntervals.MinorThird)
+            if (interval == RawIntervals.MajorThird
+                || interval == RawIntervals.MinorThird)
                 Third = interval;
+
             if (interval == RawIntervals.PerfectFifth)
                 HasPerfectFifth = true;
-            if ((interval == RawIntervals.DiminishedThird || interval == RawIntervals.AugmentedThird)
+
+            if (interval == RawIntervals.DiminishedThird
+                || interval == RawIntervals.AugmentedThird
                 || interval.Degree == 4
                 || interval.Degree == 2)
                 Suspensions.Add(interval);
-            if (interval.Degree == 5 && interval.Accidental != 0)
+
+            if (interval.Degree == 5
+                && interval.Accidental != 0)
                 AlteredFifth = interval;
         }
         if (AlteredFifth != null)
@@ -132,6 +138,18 @@ public class IntervalStructure : ValueObject, IReadOnlySet<Interval>, ISymbolSer
         return CreateNew(sanitizedIntervals);
     }
 
+    /// <summary>
+    /// Attempts to identify the scale represented by this interval structure.
+    /// </summary>
+    public bool CanIdentifyScale(out string? name, out int? mode)
+    {
+        name = default;
+        mode = default;
+        if (PatternHelper.CanIdentifyScale(Intervals.Select(it => it.Value), out name, out mode))
+            return true;
+        return false;
+    }
+
     IEnumerator IEnumerable.GetEnumerator()
         => GetEnumerator();
 
@@ -182,9 +200,14 @@ public class IntervalStructure : ValueObject, IReadOnlySet<Interval>, ISymbolSer
     public static IntervalStructure FromChordSymbol(string chordSymbol)
         => SymbolHelper.ParseChordSymbol(chordSymbol);
 
-    public string ToSymbol()
-        => ToChordSymbol();
+    /// <summary>
+    /// Return a string symbol representing this interval structure.
+    /// </summary>
+    public string ToSymbol() => ToChordSymbol();
 
+    /// <summary>
+    /// Parse a string symbol into an interval structure object.
+    /// </summary>
     public static IntervalStructure FromSymbol(string symbol)
         => FromChordSymbol(symbol);
 
@@ -202,9 +225,16 @@ public class IntervalStructure : ValueObject, IReadOnlySet<Interval>, ISymbolSer
     public static implicit operator IntervalStructure(HashSet<(int, int)> structure)
         => new([.. structure]);
 
+    public static implicit operator List<Interval>(IntervalStructure structure)
+        => [.. structure.Intervals];
+
+    public static implicit operator IntervalStructure(List<Interval> structure)
+    => new(structure);
+
+
     protected override IEnumerable<object?> GetEqualityComponents()
     {
-        foreach (string interval in NomenclatureHelper.SortIntervalNames([..Intervals.Select(i => i.Name.ToSymbol())]))
+        foreach (string interval in NomenclatureHelper.SortIntervalNames([.. Intervals.Select(i => i.Name.ToSymbol())]))
         {
             yield return interval;
         }

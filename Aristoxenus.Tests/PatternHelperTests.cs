@@ -4,7 +4,7 @@ using Aristoxenus.Core.Shared.Utilities;
 namespace Aristoxenus.Tests;
 
 [TestClass]
-public class ScaleTests
+public class PatternHelperTests
 {
 
     [TestMethod]
@@ -32,6 +32,6 @@ public class ScaleTests
     IEnumerable<int> expectedPattern)
     {
         var result = PatternHelper.GetModeOfIntervalPattern(RawScalePatterns.Diatonic, modeIndex);
-        Assert.IsTrue(Enumerable.SequenceEqual(expectedPattern,result));
+        Assert.IsTrue(Enumerable.SequenceEqual(expectedPattern, result));
     }
 }

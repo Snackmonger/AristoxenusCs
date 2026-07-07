@@ -48,7 +48,7 @@ public class Pitch : ISymbolSerializable<Pitch>
     /// will use sharps (true) or flats (false), if necessary.</param>
     public static Pitch FromFrequency(double frequency, bool useSharps = true)
     {
-        ((int, int) name, int octave) = NomenclatureHelper.GetPitchAtFrequency(frequency, useSharps);
+        ((int, int) name, int octave) = NomenclatureHelper.NamePitchAtFrequency(frequency, useSharps);
         return new(name, octave);
     }
 

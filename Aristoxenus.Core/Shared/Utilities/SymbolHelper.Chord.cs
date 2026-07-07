@@ -257,257 +257,12 @@ public static partial class SymbolHelper
         return intervalSet;
     }
 
-
-
-    public static HashSet<string> GetIntervalsFromChordSymbolBACKUP(string chordSymbol)
-    {
-        HashSet<string> intervalSet = [Symbols.One, Symbols.Five];
-        List<string> susIntervals = [Symbols.DoubleFlatThree, Symbols.SharpThree, Symbols.Four, Symbols.Two];
-        List<string> extensionSeries = [Symbols.Seven, Symbols.Nine, Symbols.Eleven, Symbols.Thirteen];
-        Dictionary<string, int> extensionIndex = extensionSeries
-            .Select((s, i) => (s, i))
-            .ToDictionary(x => x.s, x => x.i);
-
-        // Order accidental symbols for maximal munch, with empty
-        // string (bare interval) as the last element.
-        // This handles absurd chord names, e.g. Cmaj7add###11.
-        IReadOnlyList<string> accidentalCombinations = (
-            from accidentalSymbol in new[] { Symbols.Sharp, Symbols.Flat }
-            from repetitions in Enumerable.Range(1, Numbers.MaxAccidentals).Reverse()
-            select string.Concat(Enumerable.Repeat(accidentalSymbol, repetitions)))
-            .Append(string.Empty)
-            .ToList();
-
-        // Regex sorts elements into four categories.
-        //
-        // 1) The root symbol defines the note name or Roman interval relative to
-        // which the chord's structure is understood (not required, and not used
-        // in this method).
-        // 2) The main symbol generally defines the third and may imply something
-        // about the 7, e.g. "maj", "min", "dim"
-        // 3) The extension symbol defines the 7th or any natural note that is
-        // allowed to replace it, i.e. "7", "9", "11", "13"
-        // 4) The modification symbol(s) include any other interval symbol,
-        // or an add, no, or sus, e.g. "sus2", "add2", "#11", "no5"
-        //
-        // After this, we have most information about a chord, and just need to
-        // check edge cases and transform symbols into interval names.
-        Match match = RegularExpressions.ChordSymbol.Match(chordSymbol);
-        if (!match.Success)
-        {
-            match = RegularExpressions.RootlessChordSymbol.Match(chordSymbol);
-            if (!match.Success)
-            {
-                throw new InvalidAsSymbol(chordSymbol, nameof(chordSymbol));
-            }
-        }
-        string main = match.Groups.GetValueOrDefault(Keywords.Main)?.Value ?? string.Empty;
-        string extension = match.Groups.GetValueOrDefault(Keywords.Extension)?.Value ?? string.Empty;
-        string modifications = match.Groups.GetValueOrDefault(Keywords.Modification)?.Value ?? string.Empty;
-
-        void AddExtensionSeriesUpTo(int exclusiveIndex, bool flatSeven, bool diminished = false)
-        {
-            foreach (string interval in extensionSeries[..exclusiveIndex])
-            {
-                if (diminished)
-                    intervalSet.Add(interval == Symbols.Seven ? Symbols.DoubleFlatSeven : interval);
-                else
-                    intervalSet.Add(flatSeven && interval == Symbols.Seven ? Symbols.FlatSeven : interval);
-            }
-        }
-
-        // Bare chords imply major,
-        // e.g. "C", "Ab", "G"
-        if (main == string.Empty)
-        {
-            intervalSet.Add(Symbols.Three);
-
-            // Bare chord plus extension implies b7,
-            // e.g. "C7", "A11", "Gb13"
-            if (extensionIndex.TryGetValue(extension, out int bareIdx))
-            {
-                AddExtensionSeriesUpTo(bareIdx + Numbers.IndexOffset, flatSeven: true);
-                extension = string.Empty;
-            }
-
-        }
-        // Explicit major chord,
-        // e.g. "Cmaj", "BbM", 'F#Δ'
-        else if (Symbols.RecognizedMajorSymbols.Contains(main))
-        {
-            intervalSet.Add(Symbols.Three);
-
-            // Explicit major plus extension implies natural 7,
-            // e.g. 'Cmaj7', 'AM7', 'F#Δ7'
-            if (extensionIndex.TryGetValue(extension, out int majIdx))
-            {
-                AddExtensionSeriesUpTo(majIdx + Numbers.IndexOffset, flatSeven: false);
-                extension = string.Empty;
-            }
-        }
-        // Diminished chords, e.g. 'Cdim', 'Ao'
-        else if (Symbols.RecognizedDiminishedSymbols.Contains(main))
-        {
-            intervalSet.Add(Symbols.FlatThree);
-            intervalSet.Add(Symbols.FlatFive);
-            intervalSet.Remove(Symbols.Five);
-
-            // Diminished 7 implies bb7, e.g. 'Cdim7', 'Ao9'
-            if (extensionIndex.TryGetValue(extension, out int dimIdx))
-            {
-                AddExtensionSeriesUpTo(dimIdx + Numbers.IndexOffset, flatSeven: false, diminished: true);
-                extension = string.Empty;
-            }
-        }
-        // Augmented chords, e.g. 'Caug', 'A+'
-        // (NB: our system always generates 'maj#5' instead of using an
-        // augmented symbol)
-        else if (Symbols.RecognizedAugmentedSymbols.Contains(main))
-        {
-            intervalSet.Add(Symbols.Three);
-            intervalSet.Add(Symbols.SharpFive);
-            intervalSet.Remove(Symbols.Five);
-
-        }
-        // Half-diminished chords, e.g. 'Cø'
-        // (NB: our system always generates 'min7b5' instead of using a
-        // half diminished symbol)
-        else if (Symbols.RecognizedHalfDiminishedSymbols.Contains(main))
-        {
-            intervalSet.Add(Symbols.FlatThree);
-            intervalSet.Add(Symbols.FlatFive);
-            intervalSet.Remove(Symbols.Five);
-
-        }
-
-        // Minor chords, e.g. 'Cmin', 'Am', 'F#-'
-        else if (Symbols.RecognizedMinorSymbols.Contains(main))
-        {
-            intervalSet.Add(Symbols.FlatThree);
-        }
-
-        // Apart from major and diminished chords (above), a 7 implies a flat 7
-        // and a natural 7 must be indicated as a major 7.
-        if (extension != string.Empty)
-        {
-            // e.g. "Gmaj7", "FM9", "DbΔ7"
-            foreach (string symb in Symbols.RecognizedMajorSymbols)
-            {
-                if (extension.Contains(symb))
-                {
-                    string baseNumber = extension.Replace(symb, string.Empty);
-                    if (extensionIndex.TryGetValue(baseNumber, out int idx))
-                        AddExtensionSeriesUpTo(idx + Numbers.IndexOffset, flatSeven: false);
-                }
-            }
-            // Any other 7 is a b7,
-            // e.g. "Cmin7", "Gaug7"
-            if (extensionIndex.TryGetValue(extension, out int flatIdx))
-                AddExtensionSeriesUpTo(flatIdx + Numbers.IndexOffset, flatSeven: true);
-        }
-
-        // Chords not in one of the above categories may have some kind of
-        // special modifier describing their structure.
-        List<string> subtractions = [];
-        if (modifications != string.Empty)
-        {
-            foreach (string susInterval in susIntervals)
-            {
-                string susKey = Symbols.Sus + susInterval;
-                if (modifications.Contains(susKey))
-                {
-                    modifications = modifications.Replace(susKey, string.Empty);
-                    intervalSet.Add(susInterval);
-                    // Any explicit 'sus' overrides an explicit or implicit 3 or b3.
-                    subtractions.AddRange([Symbols.Three, Symbols.FlatThree]);
-                    main = string.Empty;
-                }
-            }
-
-            // Special chords in our system might have 'bb7'.
-            if (modifications.Contains(Symbols.DoubleFlatSeven))
-            {
-                string noName = Symbols.No + Symbols.DoubleFlatSeven;
-                string addName = Symbols.Add + Symbols.DoubleFlatSeven;
-                if (modifications.Contains(noName))
-                {
-                    subtractions.Add(Symbols.DoubleFlatSeven);
-                    modifications = modifications.Replace(noName, string.Empty);
-                }
-                else if (modifications.Contains(addName))
-                {
-                    intervalSet.Add(Symbols.DoubleFlatSeven);
-                    modifications = modifications.Replace(addName, string.Empty);
-                }
-                else
-                {
-                    intervalSet.Add(Symbols.DoubleFlatSeven);
-                    modifications = modifications.Replace(Symbols.DoubleFlatSeven, string.Empty);
-                }
-            }
-
-            // Most remaining symbols will be a bare interval, an addition, or
-            // subtraction. 
-            var numberRange = Enumerable.Range(2, Numbers.NotesInOctave * 2).Reverse();
-            foreach (int number in numberRange)
-            {
-                if (modifications == string.Empty)
-                    break;
-
-                foreach (string accidental in accidentalCombinations)
-                {
-                    string interval = accidental + number.ToString();
-                    // "addX" symbol
-                    if (modifications.Contains(Symbols.Add + interval))
-                    {
-                        intervalSet.Add(interval);
-                        modifications = modifications.Replace(Symbols.Add + interval, string.Empty);
-                    }
-                    // "noX" symbol
-                    else if (modifications.Contains(Symbols.No + interval))
-                    {
-                        intervalSet.Remove(interval);
-                        modifications = modifications.Replace(Symbols.No + interval, string.Empty);
-                    }
-                    // "X" bare interval symbol
-                    else if (modifications.Contains(interval))
-                    {
-                        intervalSet.Add(interval);
-                        modifications = modifications.Replace(interval, string.Empty);
-                        // Any explicit altered fifth overrides an explicit or implicit
-                        // perfect fifth
-                        if ((new[] { Symbols.SharpFive, Symbols.FlatFive }).Contains(interval))
-                            intervalSet.Remove(Symbols.Five);
-                    }
-                }
-            }
-            // Augmented symbols are expressed either as the main symbol
-            // (e.g. "Caug7", already handled) or as a modification
-            // (handled now, "C7aug")
-            foreach (string aug in Symbols.RecognizedAugmentedSymbols)
-                if (modifications.Contains(aug))
-                {
-                    intervalSet.Remove(Symbols.Five);
-                    intervalSet.Add(Symbols.SharpFive);
-                }
-        }
-        // Subtractions are treated last. Any explicit or implicit symbol
-        // can be negated by a corresponding "noX"; the order of the
-        // symbols does not affect this (e.g. "Cmin6no6add6" produces the
-        // same intervals as "Cmin6no6" or "Cminadd6no6", etc.)
-        foreach (string s in subtractions)
-            intervalSet.Remove(s);
-
-        return intervalSet;
-    }
-
-
     /// <summary>
     /// Translate a collection of intervals into a chord symbol string.
     /// </summary>
     /// <param name="style">
     /// Replacement symbols for the basic chord symbol elements, 
-    /// allowing you to turn "maj" into "Δ", "M", or anything else.
+    /// allowing you to turn (e.g.) "maj" into "Δ", "M" (or anything else).
     /// <note>
     /// Only major, minor, and diminished symbols can be configured (augmented
     /// and diminished triads and their derivatives are always written as 
@@ -527,11 +282,11 @@ public static partial class SymbolHelper
         string MinorSymbol = style?.MinorSymbol ?? Symbols.Minor;
         string DiminishedSymbol = style?.DiminishedSymbol ?? Symbols.Diminished;
 
-
-        // The total set of suffixes that might be added to a note name
+        // Load default (empty) symbols for the chord symbol elements.
+        // This is total set of suffixes that might be added to a note name
         // to form a chord symbol. Only a subset of suffixes can appear
         // in any given symbol. The order is designed to make chord symbols
-        // (including those for exotic chords) easier to read:
+        // (including those for exotic chords) easier to read.
         string normal3 = string.Empty;
         string primary = string.Empty;
         string secondary = string.Empty;
@@ -777,6 +532,7 @@ public static partial class SymbolHelper
             NomenclatureHelper
                 .SortIntervalNames(remaining.Where(s => s != (1, 0)).Select(s => CreateIntervalNameSymbol(s)))
             );
+
         ///////////////////////////////////////////////////////////////////////
         // Final Symbol:
         // Most suffixes will be empty strings in any given chord, but the 

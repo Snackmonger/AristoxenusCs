@@ -75,35 +75,41 @@ public static class NomenclatureHelper
     {
         expectedValue = Math.Abs(expectedValue);
         expectedDegree = ValidationHelper.NormalizeDegree(expectedDegree);
-        if (expectedValue > (Numbers.SemitonesInOctave * 2))
+        if (expectedValue > (Numbers.SemitonesInDoubleOctave))
             expectedValue = (expectedValue % Numbers.SemitonesInOctave) + Numbers.SemitonesInOctave;
         int index = expectedDegree - Numbers.IndexOffset;
-        List<int> doubleOctave = [.. RawScalePatterns.Diatonic, .. RawScalePatterns.Diatonic.Select(n => n + Numbers.SemitonesInOctave)];
+        List<int> doubleOctave = PatternHelper.GetDoubleOctave(RawScalePatterns.Diatonic);
         int normalValue = doubleOctave[index];
         int accidental = expectedValue - normalValue;
         return (expectedDegree, accidental);
     }
 
-    public static (int, int) GetIntervalNameBetweenNoteNames((int pitchClassIndex, int accidentals) lowerNote, (int pitchClassIndex, int accidentals) higherNote)
+    /// <summary>
+    /// Get the absolute value of the interval from its name. 
+    /// NB: Interval names cannot be recovered from absolute values, since 
+    /// multiple names can have the same value (e.g. b5 and #4 have a value 
+    /// of 6).
+    /// </summary>
+    public static int GetIntervalValueFromName((int degree, int accidentals) intervalName)
     {
-        int intervalDegree;
-        int accidentals;
-        if (lowerNote.pitchClassIndex > higherNote.pitchClassIndex)
-            intervalDegree = higherNote.pitchClassIndex - lowerNote.pitchClassIndex;
-        else
-            intervalDegree = lowerNote.pitchClassIndex + higherNote.pitchClassIndex;
-        intervalDegree = (intervalDegree + Numbers.NotesInOctave + Numbers.IndexOffset) % Numbers.NotesInOctave + Numbers.IndexOffset;
-        int lowValue = (RawScalePatterns.Diatonic[lowerNote.pitchClassIndex] + lowerNote.accidentals) % Numbers.SemitonesInOctave;
-        int highValue = (RawScalePatterns.Diatonic[higherNote.pitchClassIndex] + higherNote.accidentals) % Numbers.SemitonesInOctave;
-        int diatonicHighValue = RawScalePatterns.Diatonic[intervalDegree];
-        if (diatonicHighValue > highValue)
-            accidentals = highValue - diatonicHighValue;
-        else if (diatonicHighValue < lowValue)
-            accidentals = diatonicHighValue - highValue;
-        else
-            accidentals = Numbers.Zero;
+        List<int> doubleOctave = PatternHelper.GetDoubleOctave(RawScalePatterns.Diatonic);
+        return doubleOctave[intervalName.degree - Numbers.IndexOffset] + intervalName.accidentals;
+    }
 
-        return (intervalDegree, accidentals);
+    /// <summary>
+    /// Calculate the name of the interval that exists between a lower note 
+    /// name and a higher note name.
+    /// NB: This calculation is limted to one octave.
+    /// </summary>
+    public static (int degree, int accidentals) GetIntervalNameBetweenNoteNames((int nameIndex, int accidentals) lowerNote, (int nameIndex, int accidentals) higherNote)
+    {
+        var diatonicScaleFromLowerNote = CalculateHeptatonicNames(lowerNote, RawScalePatterns.Diatonic);
+        int degree = diatonicScaleFromLowerNote.FindIndex(it => it.nameIndex == higherNote.nameIndex) + Numbers.IndexOffset;
+        (int _, int accidentals) diatonicInterval = diatonicScaleFromLowerNote[degree - Numbers.IndexOffset];
+        int expectedValue = RawScalePatterns.Diatonic[degree - Numbers.IndexOffset] + (higherNote.accidentals - diatonicInterval.accidentals);
+        (degree, int accidentals) = GetIntervalNameFromExpectedValue(degree, expectedValue);
+
+        return (degree, accidentals);
     }
 
     public static string GetAccidentalName(int Value)
@@ -175,16 +181,20 @@ public static class NomenclatureHelper
     /// <returns></returns>
     public static (int nameIndex, int accidentals) GetSimplifiedName(int nameIndex, int accidentals)
     {
-        if (accidentals == 0)
+        if (accidentals == Numbers.Zero)
             return (nameIndex, accidentals);
 
-        int offsetValue = (RawScalePatterns.Diatonic[nameIndex]
-                + accidentals)
-                % Numbers.SemitonesInOctave;
+        int offsetValue = RawScalePatterns.Diatonic[nameIndex] + accidentals;
+
+        if (offsetValue < Numbers.Zero)
+            offsetValue = Numbers.SemitonesInOctave + offsetValue;
+
+        else if (offsetValue >= Numbers.SemitonesInOctave)
+            offsetValue %= Numbers.SemitonesInOctave;
 
         return RawScalePatterns.Diatonic.Contains(offsetValue)
             ? (RawScalePatterns.Diatonic.IndexOf(offsetValue), Numbers.Zero)
-            : accidentals > 0
+            : accidentals > Numbers.Zero
                 ? (RawScalePatterns.Diatonic.IndexOf(offsetValue + Numbers.FlatModifier), Numbers.SharpModifier)
                 : (RawScalePatterns.Diatonic.IndexOf(offsetValue + Numbers.SharpModifier), Numbers.FlatModifier);
     }
@@ -202,19 +212,19 @@ public static class NomenclatureHelper
             or < Numbers.FlatModifier
         )
         {
-            throw new InvalidOperationException($"The method '{nameof(FlipBinomial)}' does not process names with more than one accidental.");
+            throw new InvalidOperationException($"{nameof(NomenclatureHelper)}.{nameof(FlipBinomial)}: Cannot process names with more than one accidental.");
         }
         // Naturals
         // A, D, G are returned unchanged
         // B, C, E, F are flipped to Cb, B#, etc. in 
-        if (accidentals == 0)
+        if (accidentals == Numbers.Zero)
         {
             return nameIndex switch
             {
                 B_C or
                 E_F =>
                 (
-                    nameIndex: (nameIndex + Numbers.SharpModifier) % 7,
+                    nameIndex: (nameIndex + Numbers.SharpModifier) % Numbers.NotesInOctave,
                     accidentals: Numbers.FlatModifier
                 ),
                 E_F + Numbers.SharpModifier or
@@ -245,26 +255,28 @@ public static class NomenclatureHelper
 
     }
 
-    public static List<(int nameIndex, int accidentals)> CalculateHeptatonicNames((int nameIndex, int accidentals) noteName, IEnumerable<int> pattern)
+    /// <summary>
+    /// Given a note name and a heptatonic scale pattern, return the names 
+    /// of all note names in the scale.
+    /// </summary>
+    public static List<(int nameIndex, int accidentals)> CalculateHeptatonicNames((int nameIndex, int accidentals) keynote, IEnumerable<int> pattern)
     {
-        pattern = [0, .. pattern];
-        List<int> _pattern = [.. pattern.ToHashSet().Order()];
+        pattern = [Numbers.Zero, .. pattern];
+        List<int> intervals = [.. pattern.ToHashSet().Order()];
         List<(int, int)> results = [];
-        int keynoteIndex = noteName.nameIndex;
-        int keynoteAccidentals = noteName.accidentals;
-        int keynoteAbsoluteValue = RawScalePatterns.Diatonic[keynoteIndex] + keynoteAccidentals;
+        int keynoteAbsoluteValue = RawScalePatterns.Diatonic[keynote.nameIndex] + keynote.accidentals;
+        int newNameIndex,
+            tonesOffset,
+            originalValue,
+            relativeValue,
+            accidentals;
 
-        int newNameIndex;
-        int tonesOffset;
-        int originalValue;
-        int relativeValue;
-        int accidentals;
-        for (int i = 0; i < Numbers.NotesInOctave; i++)
+        for (int i = Numbers.Zero; i < Numbers.NotesInOctave; i++)
         {
-            newNameIndex = (i + keynoteIndex) % Numbers.NotesInOctave;
-            tonesOffset = (int)Math.Floor((double)(i + keynoteIndex) / Numbers.NotesInOctave) * Numbers.SemitonesInOctave;
+            newNameIndex = (i + keynote.nameIndex) % Numbers.NotesInOctave;
+            tonesOffset = (int)Math.Floor((double)(i + keynote.nameIndex) / Numbers.NotesInOctave) * Numbers.SemitonesInOctave;
             originalValue = RawScalePatterns.Diatonic[newNameIndex];
-            relativeValue = (keynoteAbsoluteValue + _pattern[i]);
+            relativeValue = keynoteAbsoluteValue + intervals[i];
             accidentals = relativeValue - (originalValue + tonesOffset);
             results.Add((newNameIndex, accidentals));
         }
@@ -277,13 +289,6 @@ public static class NomenclatureHelper
         i.Sort((x, y) => _intervalSymbolSortTable[x].CompareTo(_intervalSymbolSortTable[y]));
         return [.. i];
     }
-
-    public static List<(int, int)> SortIntervalNames(IEnumerable<(int degree, int accidentals)> intervals)
-        => [
-            ..intervals
-                .OrderBy(i => i.degree)
-                .ThenBy(i => i.accidentals)
-        ];
 
     public static string GetIntervalQuality(int degree, int value)
     {
@@ -348,58 +353,58 @@ public static class NomenclatureHelper
             },
             8 => value switch
             {
-                12 + 0 => Keywords.Perfect,
+                Numbers.SemitonesInOctave + 0 => Keywords.Perfect,
                 _ => null
             },
             9 => value switch
             {
-                12 + 1 => Keywords.Minor,
-                12 + 2 => Keywords.Major,
-                12 + 3 => Keywords.Augmented,
-                12 + 4 => Keywords.Double + Symbols.Whitespace + Keywords.Augmented,
+                Numbers.SemitonesInOctave + 1 => Keywords.Minor,
+                Numbers.SemitonesInOctave + 2 => Keywords.Major,
+                Numbers.SemitonesInOctave + 3 => Keywords.Augmented,
+                Numbers.SemitonesInOctave + 4 => Keywords.Double + Symbols.Whitespace + Keywords.Augmented,
                 _ => null
             },
             10 => value switch
             {
-                12 + 2 => Keywords.Diminished,
-                12 + 3 => Keywords.Minor,
-                12 + 4 => Keywords.Major,
-                12 + 5 => Keywords.Augmented,
-                12 + 6 => Keywords.Double + Symbols.Whitespace + Keywords.Augmented,
+                Numbers.SemitonesInOctave + 2 => Keywords.Diminished,
+                Numbers.SemitonesInOctave + 3 => Keywords.Minor,
+                Numbers.SemitonesInOctave + 4 => Keywords.Major,
+                Numbers.SemitonesInOctave + 5 => Keywords.Augmented,
+                Numbers.SemitonesInOctave + 6 => Keywords.Double + Symbols.Whitespace + Keywords.Augmented,
                 _ => null
             },
             11 => value switch
             {
-                12 + 3 => Keywords.Double + Symbols.Whitespace + Keywords.Diminished,
-                12 + 4 => Keywords.Diminished,
-                12 + 5 => Keywords.Perfect,
-                12 + 6 => Keywords.Augmented,
-                12 + 7 => Keywords.Double + Symbols.Whitespace + Keywords.Augmented,
+                Numbers.SemitonesInOctave + 3 => Keywords.Double + Symbols.Whitespace + Keywords.Diminished,
+                Numbers.SemitonesInOctave + 4 => Keywords.Diminished,
+                Numbers.SemitonesInOctave + 5 => Keywords.Perfect,
+                Numbers.SemitonesInOctave + 6 => Keywords.Augmented,
+                Numbers.SemitonesInOctave + 7 => Keywords.Double + Symbols.Whitespace + Keywords.Augmented,
                 _ => null
             },
             12 => value switch
             {
-                12 + 5 => Keywords.Double + Symbols.Whitespace + Keywords.Diminished,
-                12 + 6 => Keywords.Diminished,
-                12 + 7 => Keywords.Perfect,
-                12 + 8 => Keywords.Augmented,
-                12 + 9 => Keywords.Double + Symbols.Whitespace + Keywords.Augmented,
+                Numbers.SemitonesInOctave + 5 => Keywords.Double + Symbols.Whitespace + Keywords.Diminished,
+                Numbers.SemitonesInOctave + 6 => Keywords.Diminished,
+                Numbers.SemitonesInOctave + 7 => Keywords.Perfect,
+                Numbers.SemitonesInOctave + 8 => Keywords.Augmented,
+                Numbers.SemitonesInOctave + 9 => Keywords.Double + Symbols.Whitespace + Keywords.Augmented,
                 _ => null
             },
             13 => value switch
             {
-                12 + 6 => Keywords.Double + Symbols.Whitespace + Keywords.Diminished,
-                12 + 7 => Keywords.Diminished,
-                12 + 8 => Keywords.Minor,
-                12 + 9 => Keywords.Major,
-                12 + 10 => Keywords.Augmented,
+                Numbers.SemitonesInOctave + 6 => Keywords.Double + Symbols.Whitespace + Keywords.Diminished,
+                Numbers.SemitonesInOctave + 7 => Keywords.Diminished,
+                Numbers.SemitonesInOctave + 8 => Keywords.Minor,
+                Numbers.SemitonesInOctave + 9 => Keywords.Major,
+                Numbers.SemitonesInOctave + 10 => Keywords.Augmented,
                 _ => null
             },
             14 => value switch
             {
-                12 + 9 => Keywords.Diminished,
-                12 + 10 => Keywords.Minor,
-                12 + 11 => Keywords.Major,
+                Numbers.SemitonesInOctave + 9 => Keywords.Diminished,
+                Numbers.SemitonesInOctave + 10 => Keywords.Minor,
+                Numbers.SemitonesInOctave + 11 => Keywords.Major,
                 _ => null
             },
             _ => null
@@ -417,10 +422,10 @@ public static class NomenclatureHelper
         // that raise this exception, so it's not an enormous problem
         // for most music.
         return quality ?? throw new InvalidOperationException(
-            $"Unrecognized interval quality: degree={degree}, value={value}");
+            $"{nameof(NomenclatureHelper)}.{nameof(GetIntervalQuality)}: Unrecognized interval quality: degree={degree}, value={value}");
     }
 
-    public static ((int, int), int) GetPitchAtFrequency(double frequency, bool useSharps = true)
+    public static ((int, int), int) NamePitchAtFrequency(double frequency, bool useSharps = true)
     {
         int octaves = (int)FrequencyHelper
             .GetOctavesBetweenFrequencies(

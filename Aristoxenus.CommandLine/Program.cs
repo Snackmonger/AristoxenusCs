@@ -1,68 +1,83 @@
 ﻿
+using Aristoxenus.CommandLine.Commands;
 using Aristoxenus.Core.Domains.Theory.Models;
 using Aristoxenus.Core.Shared.Utilities;
+using Spectre.Console.Cli;
 
 public static class Program
 {
-    public static void Main()
+    public static int Main()
     {
-        var name = NoteName.FromSymbol("A");
-        var scale = NomenclatureHelper.CalculateHeptatonicNames((5, 0), [0, 2, 4, 5, 7, 9, 11]);
-        foreach (var note in scale)
-        {
-            Console.WriteLine(SymbolHelper.CreateNoteNameSymbol(note));
-        }
-    }
-    public static void Something()
-    {
-        var melody = new MelodicLine<int>(0, new TimeSignature(4, Duration.Quarter),
-            [
-                // mes 1: Row, row, row your boat, gently down the stream
-                new Note("G4", Duration.Quarter.Dotted),
-                new Note("G4", Duration.Quarter.Dotted),
-                // mes 2
-                new Note("G4", Duration.Quarter),
-                new Note("A4", Duration.Eighth),
-                new Note("B4", Duration.Quarter.Dotted),
-                // mes 3
-                new Note("B4", Duration.Quarter),
-                new Note("A4", Duration.Eighth),
-                new Note("B4", Duration.Quarter),
-                new Note("C5", Duration.Eighth),
-                // mes 4
-                new Note("D5", Duration.Half.Dotted),
-
-                // mes 5: Merrily, merrily, merrily, merrily
-                new Note("G5", Duration.Quarter.Triplet),
-                new Note("G5", Duration.Quarter.Triplet),
-                new Note("G5", Duration.Quarter.Triplet),
-                new Note("D5", Duration.Quarter.Triplet),
-                new Note("D5", Duration.Quarter.Triplet),
-                new Note("D5", Duration.Quarter.Triplet),
-                // mes 6
-                new Note("B4", Duration.Quarter.Triplet),
-                new Note("B4", Duration.Quarter.Triplet),
-                new Note("B4", Duration.Quarter.Triplet),
-                new Note("G4", Duration.Quarter.Triplet),
-                new Note("G4", Duration.Quarter.Triplet),
-                new Note("G4", Duration.Quarter.Triplet),
-
-                // mes 7: Life is but a dream
-                new Note("D5", Duration.Quarter),
-                new Note("C5", Duration.Eighth),
-                new Note("B4", Duration.Quarter),
-                new Note("A4", Duration.Eighth),
-                // mes 8
-                new Note("G4", Duration.Half.Dotted)
-            ]
-        );
-
-        // CurrentTime (absolute time) is always measured in 4/4
-        Console.WriteLine(melody.CurrentTime * 4); // 7 (8 measures, 0-indexed)
-
-        // Then we use the time signature to parse the "correct" 
-        // groupings of the notes.
-        Console.WriteLine(melody.CurrentMeasure);
-
+        var result = NomenclatureHelper.GetIntervalNameBetweenNoteNames((4, 0), (3, 0));
+        Console.WriteLine(result);
+        return 0;
     }
 }
+
+//var app = new CommandApp<IdentifyScaleFromNotesCommand>();
+//return app.Run(["F", "G", "A", "B", "C", "D", "E"]);
+
+//public static class Program
+//{
+//    public static void Main()
+//    {
+//        var name = NoteName.FromSymbol("A");
+//        var scale = NomenclatureHelper.CalculateHeptatonicNames((5, 0), [0, 2, 4, 5, 7, 9, 11]);
+//        foreach (var note in scale)
+//        {
+//            Console.WriteLine(SymbolHelper.CreateNoteNameSymbol(note));
+//        }
+//    }
+//    public static void Something()
+//    {
+//        var melody = new MelodicLine<int>(0, new TimeSignature(4, Duration.Quarter),
+//            [
+//                // mes 1: Row, row, row your boat, gently down the stream
+//                new Note("G4", Duration.Quarter.Dotted),
+//                new Note("G4", Duration.Quarter.Dotted),
+//                // mes 2
+//                new Note("G4", Duration.Quarter),
+//                new Note("A4", Duration.Eighth),
+//                new Note("B4", Duration.Quarter.Dotted),
+//                // mes 3
+//                new Note("B4", Duration.Quarter),
+//                new Note("A4", Duration.Eighth),
+//                new Note("B4", Duration.Quarter),
+//                new Note("C5", Duration.Eighth),
+//                // mes 4
+//                new Note("D5", Duration.Half.Dotted),
+
+//                // mes 5: Merrily, merrily, merrily, merrily
+//                new Note("G5", Duration.Quarter.Triplet),
+//                new Note("G5", Duration.Quarter.Triplet),
+//                new Note("G5", Duration.Quarter.Triplet),
+//                new Note("D5", Duration.Quarter.Triplet),
+//                new Note("D5", Duration.Quarter.Triplet),
+//                new Note("D5", Duration.Quarter.Triplet),
+//                // mes 6
+//                new Note("B4", Duration.Quarter.Triplet),
+//                new Note("B4", Duration.Quarter.Triplet),
+//                new Note("B4", Duration.Quarter.Triplet),
+//                new Note("G4", Duration.Quarter.Triplet),
+//                new Note("G4", Duration.Quarter.Triplet),
+//                new Note("G4", Duration.Quarter.Triplet),
+
+//                // mes 7: Life is but a dream
+//                new Note("D5", Duration.Quarter),
+//                new Note("C5", Duration.Eighth),
+//                new Note("B4", Duration.Quarter),
+//                new Note("A4", Duration.Eighth),
+//                // mes 8
+//                new Note("G4", Duration.Half.Dotted)
+//            ]
+//        );
+
+//        // CurrentTime (absolute time) is always measured in 4/4
+//        Console.WriteLine(melody.CurrentTime * 4); // 7 (8 measures, 0-indexed)
+
+//        // Then we use the time signature to parse the "correct" 
+//        // groupings of the notes.
+//        Console.WriteLine(melody.CurrentMeasure);
+
+//    }
+//}

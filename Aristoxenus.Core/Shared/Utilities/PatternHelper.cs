@@ -13,8 +13,9 @@ public class PatternHelper
     /// 
     /// E.g. [0, 2, 4, 5, 7, 9, 11] mode 2 => [0, 2, 3, 5, 7, 9, 10]
     /// </summary>
-    public static List<int> GetModeOfIntervalPattern(IList<int> _pattern, int modeNumber)
+    public static List<int> GetModeOfIntervalPattern(IEnumerable<int> pattern, int modeNumber)
     {
+        List<int> _pattern = [.. pattern.ToHashSet().Order()];
         modeNumber = (modeNumber - Numbers.IndexOffset) % _pattern.Count;
         int modalSemitonesOffset = _pattern[modeNumber];
         List<int> modalIntervals = [];
@@ -32,6 +33,67 @@ public class PatternHelper
         return modalIntervals;
     }
 
-    public static List<int> GetDoubleOctave(List<int> pattern) 
+    /// <summary>
+    /// Return true if the <paramref name="pattern"/> (or one of its inversions /
+    /// modes contains the given <paramref name="subPattern"/>.
+    /// </summary>
+    public static bool IsModalSubset(IEnumerable<int> pattern, IEnumerable<int> subPattern)
+    {
+        int mode = default;
+        for (int i = default; i < pattern.Count(); i++)
+        {
+            mode = i + Numbers.IndexOffset;
+            HashSet<int> modalRotation = [.. GetModeOfIntervalPattern(pattern, mode)];
+            if (modalRotation.IsSupersetOf(subPattern))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// Return true if the <paramref name="pattern"/> (or one of its inversions /
+    /// modes) is equal to the given <paramref name="otherPattern"/>.
+    /// </summary>
+    public static bool IsModalRotation(IEnumerable<int> pattern, IEnumerable<int> otherPattern, out int mode)
+    {
+        mode = default;
+        for (int i = default; i < pattern.Count(); i++)
+        {
+            mode = i + Numbers.IndexOffset;
+            HashSet<int> modalRotation = [.. GetModeOfIntervalPattern(pattern, mode)];
+            if (modalRotation.SetEquals(otherPattern))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// Return true if the given pattern of integers can be recognized as 
+    /// a known scale, and if so, write its name and mode to the out 
+    /// parameters.
+    /// </summary>
+    public static bool CanIdentifyScale(IEnumerable<int> pattern, out string? name, out int? mode)
+    {
+        name = default;
+        mode = default;
+        foreach (var (scaleName, scalePattern) in RawScalePatterns.AllScales())
+            if (IsModalRotation(pattern, scalePattern, out int modeNumber))
+            {
+                name = scaleName;
+                mode = modeNumber;
+                return true;
+            }
+        return false;
+    }
+
+    /// <summary>
+    /// Extend the given pattern by repeating its intervals again an octave
+    /// higher.
+    /// </summary>
+    public static List<int> GetDoubleOctave(IEnumerable<int> pattern)
         => [.. pattern, .. pattern.Select(i => i + Numbers.SemitonesInOctave)];
 }

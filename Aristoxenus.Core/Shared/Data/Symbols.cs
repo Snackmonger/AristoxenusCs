@@ -1,7 +1,8 @@
 ﻿namespace Aristoxenus.Core.Shared.Data
 {
     /// <summary>
-    /// Symbols that are used as elements to constuct other symbols.
+    /// Symbols that are used as elements in analysis or construction of
+    /// other symbols.
     /// </summary>
     public class Symbols
     {
@@ -11,11 +12,11 @@
         public const string NaturalNoteNames = "CDEFGAB";
         public const string CentralNoteName = "A4";
         public const string Diminished = "dim";
-        public const string O = "o";
+        public const string LowercaseO = "o";
         public const string Augmented = "aug";
         public const string Major = "maj";
         public const string Delta = "Δ";
-        public const string Oe = "ø";
+        public const string LowercaseOe = "ø";
         public const string Minor = "min";
         public const string UpperM = "M";
         public const string LowerM = "m";
@@ -59,14 +60,14 @@
         ];
         public static readonly string[] RecognizedDiminishedSymbols = [
             Diminished,
-            O
+            LowercaseO
         ];
         public static readonly string[] RecognizedAugmentedSymbols = [
             Augmented,
             Plus
         ];
         public static readonly string[] RecognizedHalfDiminishedSymbols = [
-            Oe
+            LowercaseOe
         ];
     }
 }

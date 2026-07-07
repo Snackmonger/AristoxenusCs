@@ -54,21 +54,20 @@ public class IntervalName : ValueObject, ISymbolSerializable<IntervalName>
     /// </summary>
     public readonly string LongOrdinalName;
 
-    // Constructors, Factories ////////////////////////////////////////////////
+
     public IntervalName(int degree, int accidental)
     {
         Accidental = ValidationHelper.NormalizeAccidental(accidental);
         Degree = ValidationHelper.NormalizeDegree(degree);
-        Value = PatternHelper
-            .GetDoubleOctave([.. RawScalePatterns.Diatonic])[
-                (Degree - 1) % (Numbers.NotesInOctave * 2)
-            ] + accidental;
+        Value = PatternHelper.GetDoubleOctave(RawScalePatterns.Diatonic)
+            [(Degree - Numbers.IndexOffset) % (Numbers.NotesInDoubleOctave)] 
+            + accidental;
         FirstOctaveValue = Value < Numbers.SemitonesInOctave
             ? Value
             : Value % Numbers.SemitonesInOctave;
         SecondOctaveValue = FirstOctaveValue + Numbers.SemitonesInOctave;
         RomanName = SymbolHelper.CreateAccidentalSymbol(accidental)
-            + RomanNumerals.Encode(degree % (Numbers.NotesInOctave * 2));
+            + RomanNumerals.Encode(degree % (Numbers.NotesInDoubleOctave));
         LongCardinalName = $"{ NomenclatureHelper.GetAccidentalName(accidental) } { Arithmology.Cardinal(degree) }";
         LongOrdinalName = $"{ NomenclatureHelper.GetAccidentalName(accidental) } { Arithmology.Ordinal(degree) }";
     }
@@ -87,15 +86,23 @@ public class IntervalName : ValueObject, ISymbolSerializable<IntervalName>
             .GetIntervalNameFromExpectedValue(expectedDegree, expectedValue);
 
 
+    /// <summary>
+    /// Initialize an interval name from the string symbol representation.
+    /// </summary>
     public static IntervalName FromSymbol(string intervalSymbol) 
         => SymbolHelper.ParseIntervalNameSymbol(intervalSymbol);
-    public string ToSymbol() => SymbolHelper.CreateIntervalNameSymbol(this);
+
+    /// <summary>
+    /// Get the string symbol representation of this interval name.
+    /// </summary>
+    public string ToSymbol() 
+        => SymbolHelper.CreateIntervalNameSymbol(this);
+
     static IntervalName ISymbolSerializable<IntervalName>.FromSymbol(string symbol)
         => SymbolHelper.ParseIntervalNameSymbol(symbol);
-    string ISymbolSerializable<IntervalName>.ToSymbol() => ToSymbol();
 
-    public void Deconstruct(out int degree, out int accidental) 
-        => (degree, accidental) = (Degree, Accidental);
+    string ISymbolSerializable<IntervalName>.ToSymbol() 
+        => ToSymbol();
 
 
     protected override IEnumerable<object?> GetEqualityComponents()
@@ -103,6 +110,10 @@ public class IntervalName : ValueObject, ISymbolSerializable<IntervalName>
         yield return Degree;
         yield return Accidental;
     }
+
+
+    public void Deconstruct(out int degree, out int accidental) 
+        => (degree, accidental) = (Degree, Accidental);
 
 
     public static implicit operator (int, int)(IntervalName intervalName) 

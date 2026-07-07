@@ -33,6 +33,10 @@ namespace Aristoxenus.Tests
         [DataRow("Cdim11nobb7", new[] { "1", "b3", "b5", "9", "11" })]
         [DataRow("Cminno5bb7", new[] { "1", "b3", "bb7" })]
         [DataRow("C9no3", new[] { "1", "5", "b7", "9" })]
+        [DataRow("C11no5", new[] { "1", "3","b7", "9" ,"11"})]
+        [DataRow("C13no11", new[] { "1", "3", "5", "b7", "9", "13"})]
+        [DataRow("C9add11", new[] { "1", "3", "5", "b7", "9" , "11"})]
+        [DataRow("C9no9", new[] { "1", "3", "5", "b7" })]
         public void ParseChordSymbol_ValidString_ReturnsCorrectImplicitStructure(string chordSymbol, string[] expectedIntervals)
         {
             HashSet<(int, int)> intervals = SymbolHelper.ParseChordSymbol(chordSymbol);
