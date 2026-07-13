@@ -3,6 +3,7 @@
     <File Path=".editorconfig" />
     <File Path="README.md" />
   </Folder>
+  <Project Path="Aristoxenus.Application/Aristoxenus.Application.csproj" />
   <Project Path="Aristoxenus.CommandLine/Aristoxenus.CommandLine.csproj" />
   <Project Path="Aristoxenus.Core/Aristoxenus.Core.csproj" />
   <Project Path="Aristoxenus.Guitar/Aristoxenus.Guitar.csproj" Id="6104ba1f-c71d-4ba1-b3da-d8768e721d04" />

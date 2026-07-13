@@ -1,5 +1,5 @@
-﻿using Aristoxenus.Core.Domains.Theory.Models;
-using Aristoxenus.Core.Shared.Utilities;
+﻿
+using Aristoxenus.Core.Utilities;
 
 namespace Aristoxenus.Tests
 {
@@ -40,7 +40,7 @@ namespace Aristoxenus.Tests
         public void ParseChordSymbol_ValidString_ReturnsCorrectImplicitStructure(string chordSymbol, string[] expectedIntervals)
         {
             HashSet<(int, int)> intervals = SymbolHelper.ParseChordSymbol(chordSymbol);
-            List<string> symbols = NomenclatureHelper.SortIntervalNames(intervals.Select(it => SymbolHelper.CreateIntervalNameSymbol(it)));
+            List<string> symbols = NomenclatureHelper.SortIntervalNames(intervals.Select(it => SymbolHelper.CreateScaleDegreeSymbol(it)));
             CollectionAssert.AreEqual(expectedIntervals, symbols);
         }
 
@@ -87,7 +87,7 @@ namespace Aristoxenus.Tests
         [DataRow(new[] { "1", "4", "5", "b7" }, "7sus4")]
         public void CreateChordSymbol_DefaultStyling_ReturnsCorrectSymbol(string[] intervals, string expectedChordSymbol)
         {
-            string chordSymbol = SymbolHelper.CreateChordSymbol(intervals.Select(SymbolHelper.ParseIntervalNameSymbol));
+            string chordSymbol = SymbolHelper.CreateChordSymbol(intervals.Select(SymbolHelper.ParseScaleDegreeSymbol));
             Assert.AreEqual(expectedChordSymbol, chordSymbol);
         }
     }

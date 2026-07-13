@@ -1,5 +1,5 @@
-using Aristoxenus.Core.Shared.Data;
-using Aristoxenus.Core.Shared.Utilities;
+using Aristoxenus.Core.Data;
+using Aristoxenus.Core.Utilities;
 
 namespace Aristoxenus.Tests;
 

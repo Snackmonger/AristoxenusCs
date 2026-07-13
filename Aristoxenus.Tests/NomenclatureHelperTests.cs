@@ -1,4 +1,4 @@
-﻿using Aristoxenus.Core.Shared.Utilities;
+﻿using Aristoxenus.Core.Utilities;
 
 namespace Aristoxenus.Tests;
 
@@ -36,7 +36,7 @@ public sealed class NomenclatureHelperTests
     [DataRow(11, "7")]
     public void GetIntervalValueFromName_ValidInput_CorrectOutput(int expectedValue, string intervalSymbol)
     {
-        (int degree, int accidentals) = SymbolHelper.ParseIntervalNameSymbol(intervalSymbol);
+        (int degree, int accidentals) = SymbolHelper.ParseScaleDegreeSymbol(intervalSymbol);
         int actualValue = NomenclatureHelper.GetIntervalValueFromName((degree, accidentals));
         Assert.AreEqual(expectedValue, actualValue);
     }
@@ -67,7 +67,7 @@ public sealed class NomenclatureHelperTests
     {
         (int, int) noteNameRawValues = SymbolHelper.ParseNoteNameSymbol(noteName);
         (int, int) actualIntervalRawValues = NomenclatureHelper.GetIntervalNameBetweenNoteNames(A, noteNameRawValues);
-        string actualInterval = SymbolHelper.CreateIntervalNameSymbol(actualIntervalRawValues);
+        string actualInterval = SymbolHelper.CreateScaleDegreeSymbol(actualIntervalRawValues);
         Assert.AreEqual(expectedInterval, actualInterval);
     }
 
@@ -96,7 +96,7 @@ public sealed class NomenclatureHelperTests
     {
         (int, int) noteNameRawValues = SymbolHelper.ParseNoteNameSymbol(noteName);
         (int, int) actualIntervalRawValues = NomenclatureHelper.GetIntervalNameBetweenNoteNames(G, noteNameRawValues);
-        string actualInterval = SymbolHelper.CreateIntervalNameSymbol(actualIntervalRawValues);
+        string actualInterval = SymbolHelper.CreateScaleDegreeSymbol(actualIntervalRawValues);
         Assert.AreEqual(expectedInterval, actualInterval);
     }
 
@@ -148,7 +148,7 @@ public sealed class NomenclatureHelperTests
     [DataRow("7", "F#")]
     public void NoteNameAbove_GNoteInBass_ReturnsCorrectNameAbove(string intervalName, string expectedNoteName)
     {
-        (int, int) intervalRawValue = SymbolHelper.ParseIntervalNameSymbol(intervalName);
+        (int, int) intervalRawValue = SymbolHelper.ParseScaleDegreeSymbol(intervalName);
         (int, int) actualNoteNameRawValue = NomenclatureHelper.GetNoteNameAbove(G, intervalRawValue);
         string actualNoteName = SymbolHelper.CreateNoteNameSymbol(actualNoteNameRawValue);
         Assert.AreEqual(expectedNoteName, actualNoteName);
@@ -177,7 +177,7 @@ public sealed class NomenclatureHelperTests
     [DataRow("7", "F##")]
     public void NoteNameAbove_GSharpNoteInBass_ReturnsCorrectNameAbove(string intervalName, string expectedNoteName)
     {
-        (int, int) intervalRawValue = SymbolHelper.ParseIntervalNameSymbol(intervalName);
+        (int, int) intervalRawValue = SymbolHelper.ParseScaleDegreeSymbol(intervalName);
         (int, int) actualNoteNameRawValue = NomenclatureHelper.GetNoteNameAbove(GSharp, intervalRawValue);
         string actualNoteName = SymbolHelper.CreateNoteNameSymbol(actualNoteNameRawValue);
         Assert.AreEqual(expectedNoteName, actualNoteName);
@@ -206,7 +206,7 @@ public sealed class NomenclatureHelperTests
     [DataRow("7", "G#")]
     public void NoteNameAbove_ANoteInBass_ReturnsCorrectNoteNameAbove(string intervalName, string expectedNoteName)
     {
-        (int, int) intervalRawValue = SymbolHelper.ParseIntervalNameSymbol(intervalName);
+        (int, int) intervalRawValue = SymbolHelper.ParseScaleDegreeSymbol(intervalName);
         (int, int) actualNoteNameRawValue = NomenclatureHelper.GetNoteNameAbove(A, intervalRawValue);
         string actualNoteName = SymbolHelper.CreateNoteNameSymbol(actualNoteNameRawValue);
         Assert.AreEqual(expectedNoteName, actualNoteName);
@@ -241,7 +241,7 @@ public sealed class NomenclatureHelperTests
     [DataRow("7", "E")]
     public void NoteNameAbove_FNoteInBass_ReturnsCorrectNoteNameAbove(string intervalName, string expectedNoteName)
     {
-        (int, int) intervalRawValue = SymbolHelper.ParseIntervalNameSymbol(intervalName);
+        (int, int) intervalRawValue = SymbolHelper.ParseScaleDegreeSymbol(intervalName);
         (int, int) actualNoteNameRawValue = NomenclatureHelper.GetNoteNameAbove(F, intervalRawValue);
         string actualNoteName = SymbolHelper.CreateNoteNameSymbol(actualNoteNameRawValue);
         Assert.AreEqual(expectedNoteName, actualNoteName);
@@ -256,7 +256,7 @@ public sealed class NomenclatureHelperTests
     [DataRow(["1", "3", "5", "b7", "b9"])]
     public void IsDominant_DominantStructure_ReturnsTrue(string[] intervals)
     {
-        IEnumerable<(int, int)> rawValues = intervals.Select(SymbolHelper.ParseIntervalNameSymbol);
+        IEnumerable<(int, int)> rawValues = intervals.Select(SymbolHelper.ParseScaleDegreeSymbol);
         Assert.IsTrue(NomenclatureHelper.IsDominant(rawValues));
     }
 
@@ -268,7 +268,7 @@ public sealed class NomenclatureHelperTests
     [DataRow(["1", "3", "5", "7", "b9"])]
     public void IsDominant_NonDominantStructure_ReturnsFalse(string[] intervals)
     {
-        IEnumerable<(int, int)> rawValues = intervals.Select(SymbolHelper.ParseIntervalNameSymbol);
+        IEnumerable<(int, int)> rawValues = intervals.Select(SymbolHelper.ParseScaleDegreeSymbol);
         Assert.IsFalse(NomenclatureHelper.IsDominant(rawValues));
     }
 
@@ -280,7 +280,7 @@ public sealed class NomenclatureHelperTests
     [DataRow(["1", "b3", "b5", "bb7", "11"])]
     public void IsDiminished_DiminishedStructure_ReturnsTrue(string[] intervals)
     {
-        IEnumerable<(int, int)> rawValues = intervals.Select(SymbolHelper.ParseIntervalNameSymbol);
+        IEnumerable<(int, int)> rawValues = intervals.Select(SymbolHelper.ParseScaleDegreeSymbol);
         Assert.IsTrue(NomenclatureHelper.IsDiminished(rawValues));
     }
 
@@ -292,7 +292,7 @@ public sealed class NomenclatureHelperTests
     [DataRow(["1", "b3", "5", "bb7", "b9"])]
     public void IsDiminished_NonDiminishedStructure_ReturnsFalse(string[] intervals)
     {
-        IEnumerable<(int, int)> rawValues = intervals.Select(SymbolHelper.ParseIntervalNameSymbol);
+        IEnumerable<(int, int)> rawValues = intervals.Select(SymbolHelper.ParseScaleDegreeSymbol);
         Assert.IsFalse(NomenclatureHelper.IsDiminished(rawValues));
     }
 
@@ -305,7 +305,7 @@ public sealed class NomenclatureHelperTests
     [DataRow(["1", "3", "5", "7"])]
     public void HasPerfectFifth_PerfectFifthStructure_ReturnsTrue(string[] intervals)
     {
-        IEnumerable<(int, int)> rawValues = intervals.Select(SymbolHelper.ParseIntervalNameSymbol);
+        IEnumerable<(int, int)> rawValues = intervals.Select(SymbolHelper.ParseScaleDegreeSymbol);
         Assert.IsTrue(NomenclatureHelper.HasPerfectFifth(rawValues));
     }
 
@@ -322,7 +322,7 @@ public sealed class NomenclatureHelperTests
     [DataRow(["1", "4", "7"])]
     public void HasPerfectFifth_NonPerfectFifthStructure_ReturnsFalse(string[] intervals)
     {
-        IEnumerable<(int, int)> rawValues = intervals.Select(SymbolHelper.ParseIntervalNameSymbol);
+        IEnumerable<(int, int)> rawValues = intervals.Select(SymbolHelper.ParseScaleDegreeSymbol);
         Assert.IsFalse(NomenclatureHelper.HasPerfectFifth(rawValues));
     }
 
@@ -339,7 +339,7 @@ public sealed class NomenclatureHelperTests
     [DataRow(["1", "3", "#5", "6"])]
     public void HasAlteredFifth_AlteredFifthStructure_ReturnsTrue(string[] intervals)
     {
-        IEnumerable<(int, int)> rawValues = intervals.Select(SymbolHelper.ParseIntervalNameSymbol);
+        IEnumerable<(int, int)> rawValues = intervals.Select(SymbolHelper.ParseScaleDegreeSymbol);
         Assert.IsTrue(NomenclatureHelper.HasAlteredFifth(rawValues));
     }
 
@@ -351,7 +351,7 @@ public sealed class NomenclatureHelperTests
     [DataRow(["1", "bb3", "5", "bb7"])]
     public void HasAlteredFifth_NonAlteredFifthStructure_ReturnsFalse(string[] intervals)
     {
-        IEnumerable<(int, int)> rawValues = intervals.Select(SymbolHelper.ParseIntervalNameSymbol);
+        IEnumerable<(int, int)> rawValues = intervals.Select(SymbolHelper.ParseScaleDegreeSymbol);
         Assert.IsFalse(NomenclatureHelper.HasAlteredFifth(rawValues));
     }
 
