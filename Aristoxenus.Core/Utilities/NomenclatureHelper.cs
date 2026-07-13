@@ -90,7 +90,6 @@ public static class NomenclatureHelper
     /// </summary>
     public static int GetIntervalValueFromName((int degree, int accidentals) intervalName)
     {
-        List<int> doubleOctave = PatternHelper.GetDoubleOctave(RawScalePatterns.Diatonic);
         int degree;
         int naturalValue;
         int scalingFactor = 0;
@@ -101,7 +100,7 @@ public static class NomenclatureHelper
         }
         else
             degree = intervalName.degree;
-        naturalValue = RawScalePatterns.Diatonic[degree - Numbers.IndexOffset] + (scalingFactor * Numbers.NotesInOctave);
+        naturalValue = RawScalePatterns.Diatonic[degree - Numbers.IndexOffset] + (scalingFactor * Numbers.SemitonesInOctave);
         return naturalValue + intervalName.accidentals;
     }
 
@@ -124,6 +123,10 @@ public static class NomenclatureHelper
         return (degree, accidentals);
     }
 
+    /// <summary>
+    /// Get the longform string representation of an accidental name
+    /// (e.g. "double sharp").
+    /// </summary>
     public static string GetAccidentalName(int Value)
     {
         return Value switch
@@ -136,6 +139,10 @@ public static class NomenclatureHelper
         };
     }
 
+    /// <summary>
+    /// Get the name of the note that is situated at the given <paramref name="interval"/>
+    /// above the given <paramref name="noteName"/>
+    /// </summary>
     public static (int, int) GetNoteNameAbove((int PitchClass, int Accidental) noteName, (int Degree, int Accidental) interval)
     {
         int intervalValue = RawScalePatterns
@@ -295,13 +302,21 @@ public static class NomenclatureHelper
         return results;
     }
 
-    public static List<string> SortIntervalNames(IEnumerable<string> intervals)
+    /// <summary>
+    /// Sort the given scale degree symbols.
+    /// </summary>
+    public static List<string> SortIntervalNames(IEnumerable<string> scaleDegree)
     {
-        var i = intervals.ToList();
+        var i = scaleDegree.ToList();
         i.Sort((x, y) => _intervalSymbolSortTable[x].CompareTo(_intervalSymbolSortTable[y]));
         return [.. i];
     }
 
+    /// <summary>
+    /// Get a string representing the quality of the interval with the given 
+    /// ascending scale degree and value.
+    /// </summary>
+    /// <exception cref="IntervalQualityUnrecognized"></exception>
     public static string GetIntervalQuality(int degree, int value)
     {
         value = value % (Numbers.SemitonesInDoubleOctave + 1);
@@ -437,7 +452,10 @@ public static class NomenclatureHelper
         return quality ?? throw new IntervalQualityUnrecognized(degree, value);
     }
 
-
+    /// <summary>
+    /// Return the name of the pitch that exists at the given <paramref name="frequency"/>, 
+    /// describing it with sharps if <paramref name="useSharps"/> is true,
+    /// otherwise with flats.
     public static ((int, int), int) NamePitchAtFrequency(double frequency, bool useSharps = true)
     {
         int octaves = (int)FrequencyHelper
@@ -470,12 +488,54 @@ public static class NomenclatureHelper
         return ((nameIndex, accidentals), octaves);
     }
 
+    /// <summary>
+    /// Return the reciprocal of the given interval, proportional to the 
+    /// overall width of the interval itself.
+    /// </summary>
+    /// <remarks>
+    /// Examples of reciprocal widths:
+    /// 
+    /// note        reciprocal          total width 
+    /// ----        ----------          -----------
+    /// major 3rd   -> minor 6th.       octave (major 3rd + minor 6th)
+    /// major 10th  -> minor 13th       three octaves (major 10th + minor 13th)
+    /// major 17th  -> minor 20th       five octaves (major 17th + minor 20th)
+    /// </remarks>
+    public static (int Degree, int Accidental) GetReciprocalInterval((int Degree, int Accidental) interval)
+    {
+        int value = GetIntervalValueFromName(interval);
+        int reciprocalDegree = 9 - interval.Degree % Numbers.NotesInOctave 
+            + (interval.Degree / Numbers.NotesInOctave * Numbers.NotesInOctave);
+        int reciprocalValue = Numbers.SemitonesInOctave - value % Numbers.SemitonesInOctave 
+            + (value / Numbers.SemitonesInOctave * Numbers.SemitonesInOctave);
+        return GetIntervalNameFromExpectedValue(reciprocalDegree, reciprocalValue);
+    }
+
+    /// <summary>
+    /// Return true if the given collection of interval names is or contains
+    /// a dominant chord.
+    /// </summary>
     public static bool IsDominant(IEnumerable<(int, int)> intervals)
         => intervals.ToHashSet().IsSupersetOf([(3, 0), (7, -1)]);
+
+    /// <summary>
+    /// Return true if the given collection of interval names is or contains
+    /// a diminished chord.
+    /// </summary>
     public static bool IsDiminished(IEnumerable<(int, int)> intervals)
         => intervals.ToHashSet().IsSupersetOf([(3, -1), (5, -1), (7, -2)]);
+
+    /// <summary>
+    /// Return true if the given collection of interval names is or contains
+    /// a perfect fifth.
+    /// </summary>
     public static bool HasPerfectFifth(IEnumerable<(int, int)> intervals)
         => intervals.Contains((5, 0));
+
+    /// <summary>
+    /// Return true if the given collection of interval names is or contains
+    /// an altered fifth.
+    /// </summary>
     public static bool HasAlteredFifth(IEnumerable<(int Degree, int Accidentals)> intervals)
         => intervals.Any(it => it.Degree == 5 && it.Accidentals != 0);
 

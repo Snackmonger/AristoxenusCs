@@ -11,7 +11,7 @@ public sealed class NomenclatureHelperTests
     private readonly (int, int) GSharp = (4, 1);
     private readonly (int, int) A = (5, 0);
     private readonly (int, int) F = (3, 0);
-    private readonly (int, int) Db = (2, -1);
+    private readonly (int, int) Db = (2, -1); // TODO: ADD TESTS FOR THIS CASE
 
     [TestMethod]
     [DataRow(0, "1")]
@@ -34,6 +34,16 @@ public sealed class NomenclatureHelperTests
     [DataRow(9, "bb7")]
     [DataRow(10, "b7")]
     [DataRow(11, "7")]
+    [DataRow(12, "8")]
+    [DataRow(13, "b9")]
+    [DataRow(14, "9")]
+    [DataRow(15, "#9")]
+    [DataRow(15, "b10")]
+    [DataRow(16, "10")]
+    [DataRow(17, "11")]
+    [DataRow(18, "#11")]
+    [DataRow(18, "b12")]
+    [DataRow(19, "12")]
     public void GetIntervalValueFromName_ValidInput_CorrectOutput(int expectedValue, string intervalSymbol)
     {
         (int degree, int accidentals) = SymbolHelper.ParseScaleDegreeSymbol(intervalSymbol);
@@ -100,6 +110,7 @@ public sealed class NomenclatureHelperTests
         Assert.AreEqual(expectedInterval, actualInterval);
     }
 
+    // TODO: MAKE MORE READABLE WITH SYMBOLS
     [TestMethod]
     [DataRow(6, 0, 5, 2)]
     [DataRow(3, 0, 2, 1)]
@@ -355,6 +366,7 @@ public sealed class NomenclatureHelperTests
         Assert.IsFalse(NomenclatureHelper.HasAlteredFifth(rawValues));
     }
 
+    // TODO: MAKE MORE READABLE WITH SYMBOLS
     [TestMethod]
     [DataRow([4, 1, 4, 6])]
     [DataRow([4, 0, 4, 5])]

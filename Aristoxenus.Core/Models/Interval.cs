@@ -59,13 +59,10 @@ public class Interval : ValueObject
         => NomenclatureHelper.GetIntervalQuality(Degree, Value);
 
     /// <summary>
-    /// The reciprocal of the first octave form of this interval, such that
-    /// e.g. a b2 becomes a natural 7, a #4 becomes a b5 etc., and any interval
-    /// greater than an octave is reduced, so that a b9 becomes a natural 7, and
-    /// a #11 becomes a b5, etc.
+    /// The reciprocal of this interval.
     /// </summary>
-    public Interval Reciprocal
-        => FromExpectedValue(9 - (Degree % Numbers.NotesInOctave), Numbers.SemitonesInOctave - (Value % Numbers.SemitonesInOctave));
+    public Interval Reciprocal 
+        => NomenclatureHelper.GetReciprocalInterval(this);
 
     /// <summary>
     /// The unison, which is the default interval that all interval structures 
@@ -145,7 +142,7 @@ public class Interval : ValueObject
         int degree = Degree;
         int value = Value;
 
-        if (degree  is > Numbers.NotesInOctave and <= Numbers.NotesInDoubleOctave)
+        if (degree is > Numbers.NotesInOctave and <= Numbers.NotesInDoubleOctave)
             degree -= Numbers.NotesInOctave;
 
         value -= (octaves * Numbers.SemitonesInOctave);
