@@ -6,6 +6,7 @@ namespace Aristoxenus.Core.Models;
 
 /// <summary>
 /// A builder that creates a <see cref="IPitchSequenceStrategy"/>
+/// using the default implementation (<see cref="PitchSequenceStrategy"/>)
 /// </summary>
 public class PitchSequenceStrategyBuilder
 {
@@ -14,7 +15,7 @@ public class PitchSequenceStrategyBuilder
     /// A pattern of positive and negative steps relative to the target 
     /// pitch.
     /// </summary>
-    private List<PitchPatternStep> _pattern;
+    private readonly List<PitchPatternStep> _pattern;
 
     /// <summary>
     /// The interval structure of the scale of which the target note 
@@ -22,15 +23,21 @@ public class PitchSequenceStrategyBuilder
     /// </summary>
     private IntervalStructure? _scale;
 
+    public PitchSequenceStrategyBuilder()
+    {
+        _pattern = new List<PitchPatternStep>();
+        _scale = null;
+    }
+
+    public PitchSequenceStrategyBuilder(List<PitchPatternStep> pattern, IntervalStructure? scale)
+    {
+        _pattern = pattern;
+        _scale = scale;
+    }   
+
     private PitchSequenceStrategyBuilder AddStep(PitchPatternStep step)
     {
         _pattern.Add(step);
-        return this;
-    }
-
-    public PitchSequenceStrategyBuilder UseScale(IntervalStructure intervals)
-    {
-        _scale = intervals;
         return this;
     }
 
@@ -40,7 +47,7 @@ public class PitchSequenceStrategyBuilder
     public PitchSequenceStrategyBuilder AddDiatonicStepAbove(int offset)
         => AddStep(new(PitchStepType.Diatonic, offset));
 
-    private RelativeInterval Parse(PitchPatternStep step)
+    private RelativeInterval ParseStep(PitchPatternStep step)
     {
         Interval interval;
         int degree;
@@ -98,24 +105,13 @@ public class PitchSequenceStrategyBuilder
         }
         throw new NotImplementedException();
     }
-    private RelativeInterval ParseStepBelow(PitchPatternStep step)
-    {
-        throw new NotImplementedException();
-    }
 
-    private RelativeInterval ParseStep(PitchPatternStep step)
-    {
-        return RelativeInterval.Unison;
-    }
 
-    public IPitchSequenceStrategy Build()
+    public IPitchSequenceStrategy Build(IntervalStructure scale)
     {
-        if (_pattern.Any(it => it.Type == PitchStepType.Diatonic) && _scale == null)
-        {
-            throw new InvalidOperationException("Diatonic steps are used, but no scale is defined");
-        }
+        _scale = scale;
         List<RelativeInterval> steps = [.. _pattern.Select(ParseStep)];
-        throw new NotImplementedException();
+        return new PitchSequenceStrategy(steps);
 
     }
 }

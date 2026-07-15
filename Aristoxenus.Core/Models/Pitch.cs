@@ -1,4 +1,5 @@
-﻿using Aristoxenus.Core.Data;
+﻿using Aristoxenus.Core.Bases;
+using Aristoxenus.Core.Data;
 using Aristoxenus.Core.Errors;
 using Aristoxenus.Core.Interfaces;
 using Aristoxenus.Core.Utilities;
@@ -9,7 +10,7 @@ namespace Aristoxenus.Core.Models;
 /// Representation of a NoteName in the concrete tonal space of a range of
 /// octaves.
 /// </summary>
-public class Pitch : ISymbolSerializable<Pitch>
+public class Pitch :  ValueObject, ISymbolSerializable<Pitch>
 {
 
     public NoteName Name;
@@ -33,7 +34,7 @@ public class Pitch : ISymbolSerializable<Pitch>
     public readonly double Frequency;
 
 
-    private Pitch(NoteName noteName, int octaveNumber)
+    public Pitch(NoteName noteName, int octaveNumber)
     {
         Name = noteName;
         Octave = Math.Abs(octaveNumber % (Numbers.MaxOctaveNumber + Numbers.IndexOffset));
@@ -42,6 +43,10 @@ public class Pitch : ISymbolSerializable<Pitch>
         Frequency = FrequencyHelper.GetFrequencyFromMidiNumber(MidiNumber);
     }
 
+    /// <summary>
+    /// Create a new instance from the given <paramref name="noteName"/>
+    /// and <paramref name="expectedValue"/>.
+    /// </summary>
     public static Pitch FromExpectedValue(NoteName noteName, int expectedValue)
     {
         if (expectedValue % Numbers.SemitonesInOctave != noteName.AbsoluteValue)
@@ -50,7 +55,7 @@ public class Pitch : ISymbolSerializable<Pitch>
     }
 
     /// <summary>
-    /// Create a new instance from the given frequency.
+    /// Create a new instance from the given <paramref name="frequency"/>.
     /// </summary>
     /// <param name="useSharps">Flag that indicates whether the output pitch 
     /// will use sharps (true) or flats (false), if necessary.</param>
@@ -60,14 +65,15 @@ public class Pitch : ISymbolSerializable<Pitch>
         return new(name, octave);
     }
 
-
+    /// <summary>
+    /// Create a new instance from the given <paramref name="midiNumber"/>.
+    /// </summary>
+    /// <param name="useSharps">Flag that indicates whether the output pitch 
+    /// will use sharps (true) or flats (false), if necessary.</param>
     public static Pitch FromMidiNumber(int midiNumber, bool useSharps = true)
         => FromFrequency(
             FrequencyHelper.GetFrequencyFromMidiNumber(midiNumber), useSharps
         );
-
-
-    // Public Api /////////////////////////////////////////////////////////////
 
     /// <summary>
     /// Return the number of semitones that exist between this pitch and
@@ -76,13 +82,35 @@ public class Pitch : ISymbolSerializable<Pitch>
     public int GetSemitonesBetween(Pitch pitch)
         => FrequencyHelper.GetSemitonesBetwenFrequencies(pitch.Frequency, Frequency);
 
+    /// <summary>
+    /// Get the pitch that stands N <paramref name="semitones"/> below from this
+    /// pitch, expressed in its simplest form, using sharps or flats according
+    /// to the flag <paramref name="useSharps"/>.
+    /// </summary>
+    public Pitch GetPitchBelow(int semitones, bool useSharps = true) 
+        => FromMidiNumber(MidiNumber - semitones, useSharps);
 
+    /// <summary>
+    /// Get the pitch that stands N <paramref name="semitones"/> above from this
+    /// pitch, expressed in its simplest form, using sharps or flats according
+    /// to the flag <paramref name="useSharps"/>.
+    /// </summary>
+    public Pitch GetPitchAbove(int semitones, bool useSharps = true) 
+        => FromMidiNumber(MidiNumber + semitones, useSharps);
+
+    /// <summary>
+    /// Get the pitch that stands at the given interval below this pitch.
+    /// </summary>
     public Pitch GetPitchBelow(Interval interval)
     {
         var noteName = Name.NoteNameBelow(interval);
         int value = Value - interval.Value;
         return FromExpectedValue(noteName, value);
     }
+
+    /// <summary>
+    /// Get the pitch that stands at the given interval above this pitch.
+    /// </summary>
     public Pitch GetPitchAbove(Interval interval)
     {
         var noteName = Name.NoteNameAbove(interval);
@@ -100,6 +128,11 @@ public class Pitch : ISymbolSerializable<Pitch>
     string ISymbolSerializable<Pitch>.ToSymbol() => ToSymbol();
     static Pitch ISymbolSerializable<Pitch>.FromSymbol(string symbol) => FromSymbol(symbol);
 
+    protected override IEnumerable<object?> GetEqualityComponents()
+    {
+        yield return Name;
+        yield return Octave;
+    }
 
     public static implicit operator string(Pitch p) => p.ToSymbol();
 

@@ -43,7 +43,7 @@ public class ChordName : ValueObject, ISymbolSerializable<ChordName>
     /// </summary>
     public readonly bool HasAlteredFifth;
 
-    private ChordName(NoteName root, IntervalStructure intervals)
+    public ChordName(NoteName root, IntervalStructure intervals)
     {
         Root = root;
         Intervals = intervals;
@@ -53,7 +53,15 @@ public class ChordName : ValueObject, ISymbolSerializable<ChordName>
         HasAlteredFifth = Intervals.HasAlteredFifth;
     }
 
-
+    /// <summary>
+    /// Get the note names that represent the intervals of the chord, relative
+    /// to the root note. 
+    /// NB: The note names do not distinguish octaves, so, e.g. 4 and 11 are 
+    /// the same (but their position is determined by the interval structure).
+    /// </summary>
+    /// <returns></returns>
+    public List<NoteName> GetNoteNames()
+        => [.. Intervals.Select(Root.NoteNameAbove)];
 
     public string ToSymbol()
         => Root.ToSymbol() + Intervals.ToChordSymbol();

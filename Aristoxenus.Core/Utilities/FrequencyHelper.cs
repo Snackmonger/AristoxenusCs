@@ -10,16 +10,6 @@ public static class FrequencyHelper
         => (int)Math.Round(Numbers.SemitonesInOctave
             * Math.Log2(frequency2 / frequency1));
 
-    public static int GetSemitonesFromCentralFrequency(double frequency)
-        => GetSemitonesBetwenFrequencies(frequency, Numbers.CentralFrequency);
-
-
-    public static double GetFrequencyFromSemitones(int steps, double frequency)
-        => Math.Pow(Numbers.OctaveEquvalenceFactor, (steps / Numbers.SemitonesInOctave) * frequency);
-
-
-    public static double GetFrequencyFromSemitonesFromCentralFrequency(int steps)
-        => GetFrequencyFromSemitones(steps, Numbers.CentralFrequency);
 
     public static double GetOctavesBetweenFrequencies(double frequency1, double frequency2)
         => frequency1 is < 0 || frequency2 is < 0
@@ -41,4 +31,12 @@ public static class FrequencyHelper
                 (double)(midiNumber - Numbers.CentralMidiNumber)
             / Numbers.SemitonesInOctave);
 
+    public static int GetMidiNumberAtPitch((int PitchClass, int Accidental) noteName, int octaveNumber)
+    {
+        int value = (RawScalePatterns.Diatonic[noteName.PitchClass % Numbers.NotesInOctave] + noteName.Accidental) 
+            % Numbers.SemitonesInOctave 
+            + (octaveNumber * Numbers.SemitonesInOctave);
+        return value + Numbers.SemitonesInOctave;
+
+    }
 }

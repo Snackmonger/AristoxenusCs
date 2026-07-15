@@ -25,15 +25,17 @@ public class NoteName : ValueObject, ISymbolSerializable<NoteName>
     /// Flag indicating whether this note is a natural note or is 
     /// enharmonically equivalent to a natural note (e.g. E# = F).
     /// </summary>
-    public readonly bool IsEnharmonicallyNatural;
+    public bool IsEnharmonicallyNatural
+        => SimplifiedName.Accidental == Numbers.Zero;
 
     /// <summary>
     /// The note name's value, expressed as an absolute index in a idealized 
     /// twelve-tone octave, such that C=0, C#=1, Db=1, ..., B=11, B#=0, 
     /// and Cb=11.
     /// </summary>
-    public readonly int AbsoluteValue;
-
+    public int AbsoluteValue 
+        => (RawScalePatterns.Diatonic[PitchClass] + Accidental)
+            % Numbers.SemitonesInOctave;
 
     /// <summary>
     /// The simplest form of the name, which will be a natural or a note name
@@ -41,26 +43,14 @@ public class NoteName : ValueObject, ISymbolSerializable<NoteName>
     /// started, e.g. A#### will be simplified to C#, and Fbbbb will be 
     /// simplified to Db.
     /// </summary>
-    public readonly NoteName SimplifiedName;
-
-
+    public NoteName SimplifiedName 
+        => NomenclatureHelper.GetSimplifiedName(PitchClass, Accidental);
 
     public NoteName(int pitchClass, int accidental)
     {
         PitchClass = NormalizationHelper.NormalizePitchClass(pitchClass);
         Accidental = NormalizationHelper.NormalizeAccidental(accidental);
-        AbsoluteValue = (RawScalePatterns.Diatonic[PitchClass] + Accidental)
-            % Numbers.SemitonesInOctave;
-        (int _pitchClass, int _accidentals) = NomenclatureHelper.GetSimplifiedName(PitchClass, Accidental);
-        // Simplified name is only needed if this is not already the simplest
-        // name. NB: This check prevents an infinite recursion.
-        if (_pitchClass != PitchClass && _accidentals != Accidental)
-            SimplifiedName = (_pitchClass, _accidentals);
-        else
-            SimplifiedName = this;
-        IsEnharmonicallyNatural = SimplifiedName.Accidental == Numbers.Zero;
     }
-
 
     /// <summary>
     /// For any note for which two names exist, return the other note name with
@@ -83,14 +73,12 @@ public class NoteName : ValueObject, ISymbolSerializable<NoteName>
     public NoteName NoteNameBelow(string interval)
         => NoteNameBelow(Interval.FromScaleDegreeSymbol(interval));
 
-
     /// <summary>
     /// Calculate the note name that lies at the specified interval above 
     /// the given note name.
     /// </summary>
     public NoteName NoteNameAbove(Interval interval) 
         => NomenclatureHelper.GetNoteNameAbove(this, interval.Name);
-
 
     /// <summary>
     /// Calculate the note name that lies at the specified interval
@@ -140,7 +128,6 @@ public class NoteName : ValueObject, ISymbolSerializable<NoteName>
     static NoteName ISymbolSerializable<NoteName>.FromSymbol(string noteNameSymbol) 
         => SymbolHelper.ParseNoteNameSymbol(noteNameSymbol);
 
-
     public string ToSymbol() 
         => SymbolHelper.CreateNoteNameSymbol(this);
 
@@ -156,19 +143,17 @@ public class NoteName : ValueObject, ISymbolSerializable<NoteName>
     public static IEnumerable<NoteName> FromSymbols(IEnumerable<string> noteNameSymbols)
         => noteNameSymbols.Select(FromSymbol);
 
-
     public static implicit operator string(NoteName noteName) 
         => noteName.ToSymbol();
 
     public static implicit operator NoteName(string noteNameSymbol) 
         => SymbolHelper.ParseNoteNameSymbol(noteNameSymbol);
 
-    public static implicit operator (int, int)(NoteName noteName) 
+    public static implicit operator (int pitchClass, int accidental)(NoteName noteName) 
         => (noteName.PitchClass, noteName.Accidental);
 
     public static implicit operator NoteName((int pitchClass, int accidental) noteNameRawValues) 
         => new(noteNameRawValues.pitchClass, noteNameRawValues.accidental);
-
 
     public void Deconstruct(out int pitchClass, out int accidental) 
         => (pitchClass, accidental) = (PitchClass, Accidental);

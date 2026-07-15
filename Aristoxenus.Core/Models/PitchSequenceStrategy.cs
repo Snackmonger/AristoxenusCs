@@ -11,13 +11,14 @@ namespace Aristoxenus.Core.Models;
 /// </summary>
 public class PitchSequenceStrategy : IPitchSequenceStrategy
 {
-    private List<RelativeInterval> _relativeIntervals;
+    private readonly List<RelativeInterval> _relativeIntervals;
     internal PitchSequenceStrategy(IEnumerable<RelativeInterval> intervals)
     {
         _relativeIntervals = [.. intervals];
     }
     public List<Pitch> Execute(Pitch targetPitch)
     {
+
         return [.._relativeIntervals.Select(it => it.Direction switch 
         {
             RelativeDirection.Higher => targetPitch.GetPitchAbove(it.Interval),
