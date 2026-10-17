@@ -1,5 +1,4 @@
 ﻿using System.Text.RegularExpressions;
-
 using Aristoxenus.Core.Bases;
 using Aristoxenus.Core.Data;
 using Aristoxenus.Core.Errors;
@@ -62,6 +61,12 @@ public class ChordName : ValueObject, ISymbolSerializable<ChordName>
     /// <returns></returns>
     public List<NoteName> GetNoteNames()
         => [.. Intervals.Select(Root.NoteNameAbove)];
+
+    public Chord Reify(ChordConfiguration configuration, int octave)
+    {
+        throw new NotImplementedException();
+    }
+
 
     public string ToSymbol()
         => Root.ToSymbol() + Intervals.ToChordSymbol();

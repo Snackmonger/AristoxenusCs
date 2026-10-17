@@ -7,10 +7,8 @@ namespace Aristoxenus.Core.Models;
 /// Representation of a specific voicing derived from a root position chord.
 /// </summary>
 /// <remarks>
-/// The root position chord is first inverted (if necessary), then certain
-/// intervals in the resulting structure are displaced by an octave (if 
-/// necessary). There are two valid subclasses, representing "drop" chords 
-/// (transpose down) and "lift" chords (transpose up).
+/// There are two valid subclasses, representing "drop" chords 
+/// (transpose notes down) and "lift" chords (transpose notes up).
 /// </remarks>
 public abstract class ChordVoicing : ValueObject
 {

@@ -1,70 +1,35 @@
 ﻿using Libraries.Arithmology;
 using Aristoxenus.Core.Data;
 using Aristoxenus.Core.Errors;
-using Aristoxenus.Core.Models;
 
 namespace Aristoxenus.Core.Utilities;
 
+using NoteName = (int PitchClass, int Accidental);
+using DegreeName = (int Degree, int Accidental);
+
 public static class NomenclatureHelper
 {
+
+    /**
+     * Get a sort value for the given interval name, which is a decimal 
+     * representation of the interval's degree and accidental.
+     * 
+     * E.g. 5 == 5.0, b5 == 4.9, #5 == 5.1, ##5 == 5.2, etc.
+     */
     // 05-June-2026: Revised logic of ordering. Shouldn't affect anything
     // except very weird scales. Rules are:
     // - Any natural gets its integer.
     // - Sharps get 0.1 added to the natural.
-    // - Flats get 0.1 removed from the natural (surface form is the
-    // **previous** natural plus a decimal).
-    private static Dictionary<string, double> _intervalSymbolSortTable = new() {
-        { "1", 1 },
-        { "b2", 1.9 },
-        { "2", 2 },
-        { "#2", 2.1 },
-        { "bb3", 2.8 },
-        { "b3", 2.9 },
-        { "3", 3 },
-        { "#3", 3.1 },
-        { "##3", 3.2},
-        { "b4", 3.9 },
-        { "4", 4 },
-        { "#4", 4.1},
-        { "bb5", 4.8},
-        { "b5", 4.9 },
-        { "5", 5 },
-        { "#5", 5.1 },
-        { "##5", 5.2 },
-        { "b6", 5.9 },
-        { "6", 6 },
-        { "#6", 6.1 },
-        { "bb7", 6.8 },
-        { "b7", 6.9 },
-        { "7", 7 },
-        { "8", 8 },
-        { "b9", 8.9 },
-        { "9", 9 },
-        { "#9", 9.1 },
-        { "bb10", 9.8 },
-        { "b10", 9.9 },
-        { "10", 10 },
-        { "#10", 10.1 },
-        { "##10", 10.2 },
-        { "b11", 10.9 },
-        { "11", 11 },
-        { "#11", 11.1 },
-        { "bb12", 11.8 },
-        { "b12", 11.9 },
-        { "12", 12 },
-        { "#12", 12.1 },
-        { "##12", 12.2 },
-        { "b13", 12.9 },
-        { "13", 13 },
-        { "#13", 13.1 },
-        { "bb14", 13.8 },
-        { "b14", 13.9 },
-        { "14", 14 },
-        { "15", 15 }
-    };
+    // - Flats get 0.1 removed from the natural.
+    // - Naturally, this system means that there would be collisions for 
+    // extreme accidentals more than +/- 5 steps, but in practice the intervals
+    // will be derived from chords and scales in context, so such accidentals
+    // are not really expected and accounted for on an ad hoc basis.
+    public static double GetIntervalSortValue(DegreeName interval)
+        => interval.Degree + (interval.Accidental * 0.1);
 
     /// <summary>
-    /// Create a new interval name tuple with the degree named as given, plus 
+    /// Create a new interval degree name with the degree named as given, plus 
     /// as many accidentals as necessary to provide the expected value.
     /// </summary>
     /// <param name="expectedDegree">The degree you want the interval to be (e.g. 5)</param>
@@ -72,7 +37,7 @@ public static class NomenclatureHelper
     /// <remarks>Note that any value greater than two octaves will be reduced
     /// to fit within two octaves.</remarks>
     /// <returns>An interval name with the desired degree and value (e.g. b5 == (5, 6))</returns>
-    public static (int, int) GetIntervalNameFromExpectedValue(int expectedDegree, int expectedValue)
+    public static DegreeName GetIntervalDegreeNameFromExpectedValue(int expectedDegree, int expectedValue)
     {
         expectedValue = Math.Abs(expectedValue);
         expectedDegree = NormalizationHelper.NormalizeDegree(expectedDegree);
@@ -84,94 +49,79 @@ public static class NomenclatureHelper
     }
 
     /// <summary>
-    /// Get the absolute value of the interval from its name. 
-    /// NB: Interval names cannot be recovered from absolute values, since 
+    /// Get the absolute value of the interval from its degree name. 
+    /// NB: Degree names cannot be recovered from absolute values, since 
     /// multiple names can have the same value (e.g. b5 and #4 have a value 
     /// of 6).
     /// </summary>
-    public static int GetIntervalValueFromName((int degree, int accidentals) intervalName)
+    public static int GetIntervalValueFromDegreeName(DegreeName intervalName)
     {
         int degree;
         int naturalValue;
         int scalingFactor = 0;
-        if (intervalName.degree > Numbers.NotesInOctave)
+        if (intervalName.Degree > Numbers.NotesInOctave)
         {
-            degree = intervalName.degree % Numbers.NotesInOctave;
-            scalingFactor = intervalName.degree / Numbers.NotesInOctave;
+            degree = intervalName.Degree % Numbers.NotesInOctave;
+            scalingFactor = intervalName.Degree / Numbers.NotesInOctave;
         }
         else
-            degree = intervalName.degree;
+            degree = intervalName.Degree;
         naturalValue = RawScalePatterns.Diatonic[degree - Numbers.IndexOffset] + (scalingFactor * Numbers.SemitonesInOctave);
-        return naturalValue + intervalName.accidentals;
+        return naturalValue + intervalName.Accidental;
     }
 
 
     /// <summary>
-    /// Calculate the name of the interval that exists between a lower note 
-    /// name and a higher note name.
+    /// Calculate the degree name of the interval that exists between a lower 
+    /// note name and a higher note name.
     /// NB: This calculation is fundamentally limted to one octave since it
     /// handles bare note names (e.g. E, G#, Bb) without reference to their
     /// position in absolute pitch space. 
     /// </summary>
-    public static (int degree, int accidentals) GetIntervalNameBetweenNoteNames((int nameIndex, int accidentals) lowerNote, (int nameIndex, int accidentals) higherNote)
+    public static DegreeName GetIntervalNameBetweenNoteNames(NoteName lowerNote, NoteName higherNote)
     {
-        var diatonicScaleFromLowerNote = CalculateHeptatonicNames(lowerNote, RawScalePatterns.Diatonic);
-        int degree = diatonicScaleFromLowerNote.FindIndex(it => it.nameIndex == higherNote.nameIndex) + Numbers.IndexOffset;
-        (int _, int accidentals) diatonicInterval = diatonicScaleFromLowerNote[degree - Numbers.IndexOffset];
-        int expectedValue = RawScalePatterns.Diatonic[degree - Numbers.IndexOffset] + (higherNote.accidentals - diatonicInterval.accidentals);
-        (degree, int accidentals) = GetIntervalNameFromExpectedValue(degree, expectedValue);
+        List<NoteName> diatonicScaleFromLowerNote = CalculateHeptatonicNames(lowerNote, RawScalePatterns.Diatonic);
+        int degree = diatonicScaleFromLowerNote.FindIndex(it => it.PitchClass == higherNote.PitchClass) + Numbers.IndexOffset;
+        DegreeName diatonicInterval = diatonicScaleFromLowerNote[degree - Numbers.IndexOffset];
+        int expectedValue = RawScalePatterns.Diatonic[degree - Numbers.IndexOffset] + (higherNote.Accidental - diatonicInterval.Accidental);
+        (degree, int accidentals) = GetIntervalDegreeNameFromExpectedValue(degree, expectedValue);
 
         return (degree, accidentals);
     }
 
-    /// <summary>
-    /// Get the longform string representation of an accidental name
-    /// (e.g. "double sharp").
-    /// </summary>
-    public static string GetAccidentalName(int Value)
-    {
-        return Value switch
-        {
-            0 => string.Empty,
-            1 => Keywords.Sharp,
-            -1 => Keywords.Flat,
-            > 0 => string.Join(Symbols.Whitespace, Arithmology.Uple(Value), Keywords.Sharp),
-            _ => string.Join(Symbols.Whitespace, Arithmology.Uple(Math.Abs(Value)), Keywords.Flat)
-        };
-    }
 
     /// <summary>
-    /// Get the name of the note that is situated at the given <paramref name="interval"/>
-    /// above the given <paramref name="noteName"/>
+    /// Get the name of the note that is situated at the interval with the
+    /// given <paramref name="degreeName"/> above the given 
+    /// <paramref name="noteName"/>
     /// </summary>
-    public static (int, int) GetNoteNameAbove((int PitchClass, int Accidental) noteName, (int Degree, int Accidental) interval)
+    public static NoteName GetNoteNameAbove(NoteName noteName, DegreeName degreeName)
     {
         int intervalValue = RawScalePatterns
-            .Diatonic[interval.Degree - Numbers.IndexOffset] + interval.Accidental;
+            .Diatonic[degreeName.Degree - Numbers.IndexOffset] + degreeName.Accidental;
 
         List<(int alphabeticIndex, int accidentals)> diatonicScaleFromThisTonic
             = CalculateHeptatonicNames(noteName, RawScalePatterns.Diatonic);
 
         int diatonicValueAtIntervalDegree = RawScalePatterns
-            .Diatonic[(interval.Degree - Numbers.IndexOffset) % Numbers.NotesInOctave];
+            .Diatonic[(degreeName.Degree - Numbers.IndexOffset) % Numbers.NotesInOctave];
 
-        (int alphabeticIndex, int accidentals) newName
-            = diatonicScaleFromThisTonic[interval.Degree - Numbers.IndexOffset];
+        NoteName newName = diatonicScaleFromThisTonic[degreeName.Degree - Numbers.IndexOffset];
 
         if (diatonicValueAtIntervalDegree != intervalValue)
         {
             if (diatonicValueAtIntervalDegree > intervalValue)
             {
-                newName.accidentals -= diatonicValueAtIntervalDegree - intervalValue;
+                newName.Accidental -= diatonicValueAtIntervalDegree - intervalValue;
             }
             if (diatonicValueAtIntervalDegree < intervalValue)
             {
-                newName.accidentals += intervalValue - diatonicValueAtIntervalDegree;
+                newName.Accidental += intervalValue - diatonicValueAtIntervalDegree;
             }
         }
-        newName.accidentals %= Numbers.SemitonesInOctave;
+        newName.Accidental %= Numbers.SemitonesInOctave;
 
-        return (newName.alphabeticIndex, newName.accidentals);
+        return newName;
     }
 
 
@@ -194,12 +144,7 @@ public static class NomenclatureHelper
     /// 
     /// C and B have zero accidentals, therefore they are already in their 
     /// simplest form.
-    /// </remarks>
-    /// <param name="nameIndex">The name's index in the string "CDEFGAB".</param>
-    /// <param name="accidentals">A positive or negative integer representing
-    /// the number of sharps or flats.</param>
-    /// <returns></returns>
-    public static (int nameIndex, int accidentals) GetSimplifiedName(int nameIndex, int accidentals)
+    public static NoteName GetSimplifiedName(int nameIndex, int accidentals)
     {
         if (accidentals == Numbers.Zero)
             return (nameIndex, accidentals);
@@ -223,7 +168,7 @@ public static class NomenclatureHelper
     /// For any note for which two names exist, return the other note name with
     /// the same relative value (e.g. Bb > A#, Db > C#, C > B#, Cb > B, etc.)
     /// </summary>
-    public static (int nameIndex, int accidentals) FlipBinomial(int nameIndex, int accidentals)
+    public static NoteName FlipBinomial(int pitchClass, int accidentals)
     {
         const int B_C = 6;
         const int E_F = 2;
@@ -236,42 +181,42 @@ public static class NomenclatureHelper
         }
         // Naturals
         // A, D, G are returned unchanged
-        // B, C, E, F are flipped to Cb, B#, etc. in 
+        // B, C, E, F are flipped to Cb, B#, etc. 
         if (accidentals == Numbers.Zero)
         {
-            return nameIndex switch
+            return pitchClass switch
             {
-                B_C or
-                E_F =>
-                (
-                    nameIndex: (nameIndex + Numbers.SharpModifier) % Numbers.NotesInOctave,
-                    accidentals: Numbers.FlatModifier
-                ),
-                E_F + Numbers.SharpModifier or
-                (B_C + Numbers.SharpModifier) % Numbers.NotesInOctave =>
-                (
-                        nameIndex: (nameIndex + Numbers.NotesInOctave + Numbers.FlatModifier) % Numbers.NotesInOctave,
-                        accidentals: Numbers.SharpModifier
-                ),
-                _ => (nameIndex, accidentals)
+                B_C or E_F
+                    => ((pitchClass + Numbers.SharpModifier) % Numbers.NotesInOctave, Numbers.FlatModifier),
+
+                E_F + Numbers.SharpModifier or (B_C + Numbers.SharpModifier) % Numbers.NotesInOctave
+                    => ((pitchClass + Numbers.NotesInOctave + Numbers.FlatModifier) % Numbers.NotesInOctave, Numbers.SharpModifier),
+                _
+                    => (pitchClass, accidentals)
             };
         }
         if (accidentals == Numbers.SharpModifier)
         {
-            nameIndex = (nameIndex + Numbers.SharpModifier) % Numbers.NotesInOctave;
-            accidentals = Numbers.FlatModifier;
+            pitchClass = (pitchClass + Numbers.SharpModifier) % Numbers.NotesInOctave;
+            if (pitchClass == (B_C + Numbers.IndexOffset) % Numbers.NotesInOctave || pitchClass == E_F + Numbers.IndexOffset)
+                accidentals = Numbers.Zero;
+            else
+                accidentals = Numbers.FlatModifier;
         }
         else if (accidentals == Numbers.FlatModifier)
         {
-            if (nameIndex == Numbers.Zero)
-                nameIndex = Numbers.NotesInOctave + Numbers.FlatModifier;
+            if (pitchClass == Numbers.Zero)
+                pitchClass = Numbers.NotesInOctave + Numbers.FlatModifier;
             else
-                nameIndex -= Numbers.SharpModifier;
+                pitchClass += Numbers.FlatModifier;
 
-            accidentals = Numbers.SharpModifier;
+            if (pitchClass == B_C || pitchClass == E_F)
+                accidentals = Numbers.Zero;
+            else
+                accidentals = Numbers.SharpModifier;
         }
 
-        return (nameIndex, accidentals);
+        return (pitchClass, accidentals);
 
     }
 
@@ -279,12 +224,12 @@ public static class NomenclatureHelper
     /// Given a note name and a heptatonic scale pattern, return the names 
     /// of all note names in the scale.
     /// </summary>
-    public static List<(int nameIndex, int accidentals)> CalculateHeptatonicNames((int nameIndex, int accidentals) keynote, IEnumerable<int> pattern)
+    public static List<NoteName> CalculateHeptatonicNames(NoteName keynote, IEnumerable<int> pattern)
     {
         pattern = [Numbers.Zero, .. pattern];
         List<int> intervals = [.. pattern.ToHashSet().Order()];
-        List<(int, int)> results = [];
-        int keynoteAbsoluteValue = RawScalePatterns.Diatonic[keynote.nameIndex] + keynote.accidentals;
+        List<NoteName> results = [];
+        int keynoteAbsoluteValue = RawScalePatterns.Diatonic[keynote.PitchClass] + keynote.Accidental;
         int newNameIndex,
             tonesOffset,
             originalValue,
@@ -293,8 +238,8 @@ public static class NomenclatureHelper
 
         for (int i = Numbers.Zero; i < Numbers.NotesInOctave; i++)
         {
-            newNameIndex = (i + keynote.nameIndex) % Numbers.NotesInOctave;
-            tonesOffset = (int)Math.Floor((double)(i + keynote.nameIndex) / Numbers.NotesInOctave) * Numbers.SemitonesInOctave;
+            newNameIndex = (i + keynote.PitchClass) % Numbers.NotesInOctave;
+            tonesOffset = (int)Math.Floor((double)(i + keynote.PitchClass) / Numbers.NotesInOctave) * Numbers.SemitonesInOctave;
             originalValue = RawScalePatterns.Diatonic[newNameIndex];
             relativeValue = keynoteAbsoluteValue + intervals[i];
             accidentals = relativeValue - (originalValue + tonesOffset);
@@ -304,13 +249,29 @@ public static class NomenclatureHelper
     }
 
     /// <summary>
-    /// Sort the given scale degree symbols.
+    /// Sort the given scale degree names.
     /// </summary>
-    public static List<string> SortIntervalNames(IEnumerable<string> scaleDegree)
+    public static List<DegreeName> SortIntervalNames(IEnumerable<DegreeName> scaleDegrees)
     {
-        var i = scaleDegree.ToList();
-        i.Sort((x, y) => _intervalSymbolSortTable[x].CompareTo(_intervalSymbolSortTable[y]));
-        return [.. i];
+        var d = scaleDegrees.ToList();
+        d.Sort((left, right) => GetIntervalSortValue(left).CompareTo(GetIntervalSortValue(right)));
+        return d;
+    }
+
+
+    public static List<DegreeName> SortDegreeNames(IEnumerable<DegreeName> degreeNames)
+    {
+        List<DegreeName> result = [.. degreeNames];
+        result.Sort(CompareDegreeNames);
+        return result;
+    }
+
+
+    public static int CompareDegreeNames(DegreeName left, DegreeName right)
+    {
+        double lValue = left.Degree + (left.Accidental * 0.1);
+        double rValue = right.Degree + (right.Accidental * 0.1);
+        return lValue.CompareTo(rValue);
     }
 
     /// <summary>
@@ -504,12 +465,12 @@ public static class NomenclatureHelper
     /// </remarks>
     public static (int Degree, int Accidental) GetReciprocalInterval((int Degree, int Accidental) interval)
     {
-        int value = GetIntervalValueFromName(interval);
-        int reciprocalDegree = 9 - interval.Degree % Numbers.NotesInOctave 
+        int value = GetIntervalValueFromDegreeName(interval);
+        int reciprocalDegree = 9 - interval.Degree % Numbers.NotesInOctave
             + (interval.Degree / Numbers.NotesInOctave * Numbers.NotesInOctave);
-        int reciprocalValue = Numbers.SemitonesInOctave - value % Numbers.SemitonesInOctave 
+        int reciprocalValue = Numbers.SemitonesInOctave - value % Numbers.SemitonesInOctave
             + (value / Numbers.SemitonesInOctave * Numbers.SemitonesInOctave);
-        return GetIntervalNameFromExpectedValue(reciprocalDegree, reciprocalValue);
+        return GetIntervalDegreeNameFromExpectedValue(reciprocalDegree, reciprocalValue);
     }
 
     /// <summary>

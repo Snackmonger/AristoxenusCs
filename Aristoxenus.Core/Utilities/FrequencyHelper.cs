@@ -10,7 +10,6 @@ public static class FrequencyHelper
         => (int)Math.Round(Numbers.SemitonesInOctave
             * Math.Log2(frequency2 / frequency1));
 
-
     public static double GetOctavesBetweenFrequencies(double frequency1, double frequency2)
         => frequency1 is < 0 || frequency2 is < 0
             ? throw new InvalidAsFrequency("Frequencies must be positive values")

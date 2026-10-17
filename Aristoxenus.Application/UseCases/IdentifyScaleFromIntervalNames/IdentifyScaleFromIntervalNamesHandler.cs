@@ -33,8 +33,7 @@ public class IdentifyScaleFromIntervalNamesHandler : IRequestHandler<IdentifySca
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[WARN][{DateTime.UtcNow}] An unknown exception occurred: {ex.Message}");
-            response = Result.Fail("Request failed");
+            response = Result.Fail($"[WARNING][{DateTime.UtcNow}]: An unknown exception occurred: {ex.Message}");
         }
         return response;
     }

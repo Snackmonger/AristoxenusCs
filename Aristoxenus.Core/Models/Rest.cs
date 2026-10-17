@@ -1,16 +1,25 @@
 ﻿using Aristoxenus.Core.Interfaces;
+using Fractions;
 
 namespace Aristoxenus.Core.Models;
 
-public class Rest : IHasDuration
+public class Rest(Duration duration) : IHasDuration
 {
-    public Duration Duration { get; init; }
+    public Duration Duration { get; init; } = duration;
 
-    public Rest(Duration duration)
+    public IHasDuration Extend(int multiplier)
     {
-        Duration = duration;
+        throw new NotImplementedException();
     }
 
+    public IEnumerable<IHasDuration> SubdivideEqully(int subdivisions)
+    {
+        Fraction subduration = Duration.Value / subdivisions;
+        for (int i = 0; i < subdivisions; i++)
+        {
+            yield return new Rest(new Duration(subduration));
+        }
+    }
 }
 
 

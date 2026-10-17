@@ -1,4 +1,5 @@
-﻿
+﻿using Aristoxenus.Core.Bases;
+using Aristoxenus.Core.Data;
 using Aristoxenus.Core.Utilities;
 
 namespace Aristoxenus.Core.Models;
@@ -7,7 +8,7 @@ namespace Aristoxenus.Core.Models;
 /// Representation of a scaleform, with an underlying interval pattern 
 /// and a degree of modal rotation, centred on a particular tonic note.
 /// </summary>
-public class Scale
+public class Scale : ValueObject
 {
     public readonly NoteName Tonic;
     public readonly List<int> ScalePattern;
@@ -29,5 +30,30 @@ public class Scale
         
     }
 
+    public IEnumerable<Chord> GetChordScale(ChordConfiguration config, int startInOctave)
+    {
+        throw new NotImplementedException();
+    }
 
+    public List<Pitch> AscendingPitches(int startInOctave)
+    {
+        throw new NotImplementedException();
+    }
+
+    public List<ChordName> GetChordScaleNames(ChordConfiguration config)
+    {
+        throw new NotImplementedException();
+    }
+
+    public List<ChordName> GetChordScaleNames(ChordStructure structure, ChordNumberOfNotes numberOfNotes)
+        => GetChordScaleNames(new(structure, numberOfNotes));
+
+    protected override IEnumerable<object?> GetEqualityComponents()
+    {
+        yield return Tonic;
+        yield return ModeNumber;
+        foreach (var i in ScalePattern) yield return i;
+    }
 }
+
+

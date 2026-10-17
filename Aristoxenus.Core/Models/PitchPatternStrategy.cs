@@ -1,18 +1,15 @@
-﻿
-using Aristoxenus.Core.Interfaces;
+﻿using Aristoxenus.Core.Interfaces;
 
 namespace Aristoxenus.Core.Models;
 
 /// <summary>
 /// A strategy for generating a sequence of pitches around an unknown
-/// target pitch. This is the default implementation of <see cref=
-/// "IPitchSequenceStrategy"/> and is produced by the <see cref=
-/// "PitchSequenceStrategyBuilder"/>.
+/// target pitch.
 /// </summary>
-public class PitchSequenceStrategy : IPitchSequenceStrategy
+public class PitchPatternStrategy : IPitchPatternStrategy
 {
     private readonly List<RelativeInterval> _relativeIntervals;
-    internal PitchSequenceStrategy(IEnumerable<RelativeInterval> intervals)
+    public PitchPatternStrategy(IEnumerable<RelativeInterval> intervals)
     {
         _relativeIntervals = [.. intervals];
     }

@@ -13,7 +13,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Aristoxenus.Core\Aristoxenus.Core.csproj" />
-    <ProjectReference Include="..\Aristoxenus\Aristoxenus.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -2,14 +2,11 @@
 using Aristoxenus.Core.Data;
 using Aristoxenus.Core.Errors;
 using Aristoxenus.Core.Utilities;
-using System.Security.Cryptography.X509Certificates;
 
 namespace Aristoxenus.Core.Models;
 
 /// <summary>
-/// An interval, which might be expressed by a name that elides its position 
-/// in relative octave-space (e.g. we might call an interval a "major third"
-/// schematically even though it is technically a "major tenth")
+/// An interval
 /// </summary>
 public class Interval : ValueObject
 {
@@ -19,12 +16,7 @@ public class Interval : ValueObject
     /// </summary>
     public readonly ScaleDegree Name;
 
-    /// <summary>
-    /// The value of the interval, which must correspond with its name.
-    /// For example, an interval characterized as a b9 implies a value
-    /// of 13, but a value of 25 is also called a b9 for simplicity,
-    /// and it is the base value + (n * 12).
-    /// </summary>
+
     public readonly int Value;
 
     /// <summary>
@@ -72,7 +64,7 @@ public class Interval : ValueObject
 
     public Interval(ScaleDegree name, int value)
     {
-        int impliedValue = NomenclatureHelper.GetIntervalValueFromName(name);
+        int impliedValue = NomenclatureHelper.GetIntervalValueFromDegreeName(name);
         if (impliedValue % Numbers.SemitonesInOctave != value % Numbers.SemitonesInOctave)
         {
             throw new IntervalValueRepresentationMismatch(value, impliedValue, name.ToSymbol());
@@ -83,7 +75,7 @@ public class Interval : ValueObject
 
     public Interval(ScaleDegree name)
     {
-        Value = NomenclatureHelper.GetIntervalValueFromName(name);
+        Value = NomenclatureHelper.GetIntervalValueFromDegreeName(name);
         Name = name;
     }
 
@@ -102,7 +94,7 @@ public class Interval : ValueObject
     /// two octaves + 1 semitone).
     /// </summary>
     public static Interval FromExpectedValue(int degree, int expectedValue)
-        => new(NomenclatureHelper.GetIntervalNameFromExpectedValue(degree, expectedValue));
+        => new(NomenclatureHelper.GetIntervalDegreeNameFromExpectedValue(degree, expectedValue));
 
     /// <summary>
     /// Widen this interval by the given number of octaves. For example, 
@@ -116,7 +108,7 @@ public class Interval : ValueObject
     {
         octaves = Math.Abs(octaves);
         if (octaves > Numbers.MaxOctaveNumber)
-            throw new MaxOctavesExceeded();
+            throw new MaximumOctavesExceeded();
 
         int degree = Degree;
         int value = Value;

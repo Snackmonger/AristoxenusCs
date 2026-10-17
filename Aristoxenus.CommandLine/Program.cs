@@ -5,7 +5,7 @@ using Spectre.Console.Cli;
 using Aristoxenus.Application;
 
 using Aristoxenus.CommandLine.SpectreBridge;
-using Aristoxenus.CommandLine.Commands;
+using Aristoxenus.CommandLine.SpectreCommands;
 
 var services = new ServiceCollection();
 services.AddLogging();
@@ -24,6 +24,9 @@ app.Configure(configuration =>
     configuration
         .AddCommand<GetChordScaleCommand>("scale.chords")
         .WithDescription("Get the chord scale of the given scale form");
+    configuration
+        .AddCommand<OpenDebugMenuCommand>("debug")
+        .WithDescription("Access the debug menu");
 });
 
 return await app.RunAsync(args);

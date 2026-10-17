@@ -11,13 +11,15 @@ namespace Aristoxenus.Core.Models;
 public sealed class ScaleDegree(int degree, int accidental) : ValueObject, ISymbolSerializable<ScaleDegree>
 {
     /// <summary>
-    /// The base scale degree, expressed as a number between 1 and 15.
+    /// The base scale degree.
     /// </summary>
     public readonly int Degree = NormalizationHelper.NormalizeDegree(degree);
 
     /// <summary>
     /// The positive or negative amount by which the normal value of the 
     /// degree is skewed higher or lower, respectively.
+    /// 
+    /// Invariant: The accidental is always normalized to be within the range of -11 to 11, inclusive.
     /// </summary>
     public readonly int Accidental = NormalizationHelper.NormalizeAccidental(accidental);
 
@@ -38,13 +40,13 @@ public sealed class ScaleDegree(int degree, int accidental) : ValueObject, ISymb
     /// The cardinal symbol for this scale degree (e.g. "sharp two")
     /// </summary>
     public string CardinalName
-        => $"{NomenclatureHelper.GetAccidentalName(Accidental)} {Arithmology.Cardinal(Degree)}";
+        => $"{SymbolHelper.CreateAccidentalName(Accidental)} {Arithmology.Cardinal(Degree)}";
 
     /// <summary>
     /// The ordinal symbol for this scale degree (e.g. "sharp second")
     /// </summary>
     public string OrdinalName
-        => $"{NomenclatureHelper.GetAccidentalName(Accidental)} {Arithmology.Ordinal(Degree)}";
+        => $"{SymbolHelper.CreateAccidentalName(Accidental)} {Arithmology.Ordinal(Degree)}";
 
     public string ToSymbol()
         => SymbolHelper.CreateScaleDegreeSymbol((Degree, Accidental));

@@ -1,6 +1,6 @@
 ﻿using Aristoxenus.Core.Utilities;
 
-namespace Aristoxenus.Tests;
+namespace Aristoxenus.Core.Tests;
 
 
 [TestClass]
@@ -47,7 +47,7 @@ public sealed class NomenclatureHelperTests
     public void GetIntervalValueFromName_ValidInput_CorrectOutput(int expectedValue, string intervalSymbol)
     {
         (int degree, int accidentals) = SymbolHelper.ParseScaleDegreeSymbol(intervalSymbol);
-        int actualValue = NomenclatureHelper.GetIntervalValueFromName((degree, accidentals));
+        int actualValue = NomenclatureHelper.GetIntervalValueFromDegreeName((degree, accidentals));
         Assert.AreEqual(expectedValue, actualValue);
     }
 
@@ -380,7 +380,7 @@ public sealed class NomenclatureHelperTests
     [DataRow([7, -2, 7, 9])]
     public void GetIntervalNameFromExpectedValue_ValidValues_CorrectOutputs(int expectedDegree, int expectedAccidentals, int degree, int value)
     {
-        (int, int) actualResult = NomenclatureHelper.GetIntervalNameFromExpectedValue(degree, value);
+        (int, int) actualResult = NomenclatureHelper.GetIntervalDegreeNameFromExpectedValue(degree, value);
         Assert.AreEqual((expectedDegree, expectedAccidentals), actualResult);
     }
 

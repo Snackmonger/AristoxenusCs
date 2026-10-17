@@ -61,7 +61,10 @@ public class IntervalStructure : ValueObject, IReadOnlySet<Interval>, ISymbolSer
             sanitized.Add(interval);
         }
         Intervals = [.. sanitized];
-        IntervalSymbols = NomenclatureHelper.SortIntervalNames([.. Intervals.Select(x => x.Name.ToSymbol())]);
+        IntervalSymbols = [.. NomenclatureHelper
+            .SortDegreeNames([.. Intervals.Select(x => x.Name)])
+            .Select(s => SymbolHelper.CreateScaleDegreeSymbol(s))
+        ];
         Suspensions = [];
         IsDominant = IsSupersetOf([RawIntervals.MajorThird, RawIntervals.MinorSeventh]);
         IsDiminished = IsSupersetOf([RawIntervals.MinorThird, RawIntervals.DiminishedFifth, RawIntervals.DiminishedSeventh]);
@@ -161,7 +164,7 @@ public class IntervalStructure : ValueObject, IReadOnlySet<Interval>, ISymbolSer
     {
         name = default;
         mode = default;
-        if (PatternHelper.CanIdentifyScale(Intervals.Select(it => it.Value), out name, out mode))
+        if (PatternHelper.TryIdentifyScale(Intervals.Select(it => it.Value), out name, out mode))
             return true;
         return false;
     }
@@ -259,7 +262,9 @@ public class IntervalStructure : ValueObject, IReadOnlySet<Interval>, ISymbolSer
 
     protected override IEnumerable<object?> GetEqualityComponents()
     {
-        foreach (string interval in NomenclatureHelper.SortIntervalNames([.. Intervals.Select(i => i.Name.ToSymbol())]))
+        foreach ((int, int) interval in NomenclatureHelper
+            .SortIntervalNames(Intervals.Select(it => (it.Name.Degree, it.Name.Accidental)))
+        )
         {
             yield return interval;
         }

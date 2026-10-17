@@ -1,5 +1,4 @@
-﻿
-namespace Aristoxenus.Core.Models;
+﻿namespace Aristoxenus.Core.Data;
 
 
 

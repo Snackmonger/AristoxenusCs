@@ -6,7 +6,7 @@ Object-oriented music manipulation.
 
 ## Description
 
-Aristoxenus (ar-is-TOX-en-us) is a suite of tools for creating, manipulating, transforming, analyzing, and doing just about anything else you can think of with music.
+Aristoxenus (air-is-TOX-en-us) is a suite of tools for creating, manipulating, transforming, analyzing, and doing just about anything else you can think of with music.
 
 ## Examples
 

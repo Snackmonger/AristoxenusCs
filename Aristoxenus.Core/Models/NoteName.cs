@@ -9,17 +9,17 @@ namespace Aristoxenus.Core.Models;
 /// Representation of a musical note name, consisting of a pitch class and 
 /// an accidental, which represents a position within an abstract octave.
 /// </summary>
-public class NoteName : ValueObject, ISymbolSerializable<NoteName>
+public class NoteName(int pitchClass, int accidental) : ValueObject, ISymbolSerializable<NoteName>
 {
     /// <summary>
     /// The alphabetic part of the note name
     /// </summary>
-    public readonly int PitchClass;
+    public readonly int PitchClass = NormalizationHelper.NormalizePitchClass(pitchClass);
 
     /// <summary>
     /// The accidental adjustment of the note name.
     /// </summary>
-    public readonly int Accidental;
+    public readonly int Accidental = NormalizationHelper.NormalizeAccidental(accidental);
 
     /// <summary>
     /// Flag indicating whether this note is a natural note or is 
@@ -34,8 +34,7 @@ public class NoteName : ValueObject, ISymbolSerializable<NoteName>
     /// and Cb=11.
     /// </summary>
     public int AbsoluteValue 
-        => (RawScalePatterns.Diatonic[PitchClass] + Accidental)
-            % Numbers.SemitonesInOctave;
+        => (RawScalePatterns.Diatonic[PitchClass] + Numbers.SemitonesInOctave + Accidental) % Numbers.SemitonesInOctave;
 
     /// <summary>
     /// The simplest form of the name, which will be a natural or a note name
@@ -45,12 +44,6 @@ public class NoteName : ValueObject, ISymbolSerializable<NoteName>
     /// </summary>
     public NoteName SimplifiedName 
         => NomenclatureHelper.GetSimplifiedName(PitchClass, Accidental);
-
-    public NoteName(int pitchClass, int accidental)
-    {
-        PitchClass = NormalizationHelper.NormalizePitchClass(pitchClass);
-        Accidental = NormalizationHelper.NormalizeAccidental(accidental);
-    }
 
     /// <summary>
     /// For any note for which two names exist, return the other note name with
@@ -119,8 +112,7 @@ public class NoteName : ValueObject, ISymbolSerializable<NoteName>
     /// <param name="other"></param>
     /// <returns></returns>
     public bool IsEnharmonicallyEquivalent(NoteName other)
-        => NomenclatureHelper.GetSimplifiedName(PitchClass, Accidental) 
-        == NomenclatureHelper.GetSimplifiedName(other.PitchClass, other.Accidental);
+        => AbsoluteValue == other.AbsoluteValue;
 
     string ISymbolSerializable<NoteName>.ToSymbol() 
         => SymbolHelper.CreateNoteNameSymbol((PitchClass, Accidental));

@@ -1,13 +1,7 @@
 ﻿namespace Aristoxenus.Core.Models;
 
-public class TimeSignature 
+public class TimeSignature(int beats, Duration beatType)
 {
-    public readonly int Beats;
-    public readonly Duration BeatType;
-
-    public TimeSignature(int beats, Duration beatType)
-    {
-        Beats = beats;
-        BeatType = beatType;
-    }
+    public readonly int Beats = beats;
+    public readonly Duration BeatType = beatType;
 }

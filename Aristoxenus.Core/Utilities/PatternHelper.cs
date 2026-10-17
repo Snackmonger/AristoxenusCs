@@ -2,7 +2,7 @@
 
 namespace Aristoxenus.Core.Utilities;
 
-public class PatternHelper
+public static class PatternHelper
 {
     /// <summary>
     /// Return the <paramref name="pattern"/>'s values, rotated so that the 
@@ -34,9 +34,9 @@ public class PatternHelper
 
     /// <summary>
     /// Return true if the <paramref name="pattern"/> (or one of its inversions /
-    /// modes contains the given <paramref name="subPattern"/>.
+    /// modes) contains the given <paramref name="subPattern"/>.
     /// </summary>
-    public static bool IsModalSubset(IEnumerable<int> pattern, IEnumerable<int> subPattern, out int mode)
+    public static bool TryGetModalSubset(IEnumerable<int> pattern, IEnumerable<int> subPattern, out int mode)
     {
         mode = default;
         for (int i = default; i < pattern.Count(); i++)
@@ -55,7 +55,7 @@ public class PatternHelper
     /// Return true if the <paramref name="pattern"/> (or one of its inversions /
     /// modes) is equal to the given <paramref name="otherPattern"/>.
     /// </summary>
-    public static bool IsModalRotation(IEnumerable<int> pattern, IEnumerable<int> otherPattern, out int mode)
+    public static bool TryGetModalRotation(IEnumerable<int> pattern, IEnumerable<int> otherPattern, out int mode)
     {
         mode = default;
         for (int i = default; i < otherPattern.Count(); i++)
@@ -75,12 +75,12 @@ public class PatternHelper
     /// a known scale, and if so, write its name and mode to the out 
     /// parameters.
     /// </summary>
-    public static bool CanIdentifyScale(IEnumerable<int> pattern, out string? name, out int? mode)
+    public static bool TryIdentifyScale(IEnumerable<int> pattern, out string? name, out int? mode)
     {
         name = default;
         mode = default;
         foreach (var (scaleName, scalePattern) in RawScalePatterns.AllScales)
-            if (IsModalRotation(pattern, scalePattern, out int modeNumber))
+            if (TryGetModalRotation(pattern, scalePattern, out int modeNumber))
             {
                 name = scaleName;
                 mode = modeNumber;

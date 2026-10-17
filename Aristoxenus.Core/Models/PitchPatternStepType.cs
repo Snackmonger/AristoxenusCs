@@ -1,7 +1,6 @@
-﻿
-namespace Aristoxenus.Core.Models
+﻿namespace Aristoxenus.Core.Models
 {
-    public enum PitchStepType
+    public enum PitchPatternStepType
     {
         /// <summary>
         /// A step that represents a number of scale degrees away from the 

@@ -18,7 +18,7 @@ public static partial class SymbolHelper
     public static HashSet<(int, int)> ParseChordSymbol(string chordSymbol)
     {
         HashSet<(int, int)> intervalSet = [(1, 0), (5, 0)];
-        List<(int, int)> susIntervals = [(3, -2), (3, -1), (4, 0), (2, 0)];
+        List<(int, int)> susIntervals = [(3, -2), (3, 1), (4, 0), (2, 0)];
         List<(int, int)> extensionSeries = [(7, 0), (9, 0), (11, 0), (13, 0)];
         Dictionary<string, int> extensionIndex = extensionSeries
             .Select((s, i) => (s, i))
@@ -530,11 +530,7 @@ public static partial class SymbolHelper
         // Altered Extensions: Any extension with an accidental does not need
         // an "add" symbol (and if anything is harder to read if it has one,
         // e.g. C7#11 vs C7add#11).
-        extensions = string.Join(
-            string.Empty, 
-            NomenclatureHelper
-                .SortIntervalNames(remaining.Where(s => s != (1, 0)).Select(s => CreateScaleDegreeSymbol(s)))
-            );
+        extensions = string.Join(string.Empty, NomenclatureHelper.SortIntervalNames(remaining.Where(s => s != (1, 0))));
 
         ///////////////////////////////////////////////////////////////////////
         // Final Symbol:
@@ -543,17 +539,17 @@ public static partial class SymbolHelper
         // do appear
         ///////////////////////////////////////////////////////////////////////
         string[] symbols = [
-                    normal3,
-                    primary,
-                    secondary,
-                    sus,
-                    no3,
-                    no5,
-                    alt5,
-                    alt7,
-                    extensions,
-                    add
-            ];
+            normal3,
+            primary,
+            secondary,
+            sus,
+            no3,
+            no5,
+            alt5,
+            alt7,
+            extensions,
+            add
+        ];
         return string.Join(string.Empty, symbols);
     }
 

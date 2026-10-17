@@ -1,15 +1,16 @@
-﻿using Aristoxenus.Application.UseCases.IdentifyScaleFromIntervalNames;
-using Aristoxenus.Application.UseCases.IdentifyScaleFromNoteNames;
+﻿using System.ComponentModel;
+
 using MediatR;
+
 using Spectre.Console;
 using Spectre.Console.Cli;
-using System.ComponentModel;
 
-namespace Aristoxenus.CommandLine.Commands;
+using Aristoxenus.Application.UseCases.IdentifyScaleFromIntervalNames;
+using Aristoxenus.Application.UseCases.IdentifyScaleFromNoteNames;
 
+namespace Aristoxenus.CommandLine.SpectreCommands;
 
-
-public class IdentifyScaleCommand : AsyncCommand<IdentifyScaleCommand.IdentifyScaleCommandSettings>
+public class IdentifyScaleCommand(IMediator mediator) : AsyncCommand<IdentifyScaleCommand.IdentifyScaleCommandSettings>
 {
     public class IdentifyScaleCommandSettings : CommandSettings
     {
@@ -18,16 +19,12 @@ public class IdentifyScaleCommand : AsyncCommand<IdentifyScaleCommand.IdentifySc
         public string[] Symbols { get; set; } = [];
     }
 
-    private readonly IMediator _mediator;
-
-    public IdentifyScaleCommand(IMediator mediator) => _mediator = mediator;
-
     protected override async Task<int> ExecuteAsync(CommandContext context, IdentifyScaleCommandSettings settings, CancellationToken cancellationToken)
     {
         int exitCode;
         AnsiConsole.MarkupLine($"Beginning operation with inputs: [blue]{string.Join(", ", settings.Symbols)}[/]");
         var noteNamesRequest = new IdentifyScaleFromNoteNamesRequest(settings.Symbols);
-        var noteNamesResponse = await _mediator.Send(noteNamesRequest, cancellationToken);
+        var noteNamesResponse = await mediator.Send(noteNamesRequest, cancellationToken);
         if (noteNamesResponse.IsSuccess)
         {
             AnsiConsole.MarkupLine($"[green]SUCCESS[/]: Scale was identified as [green]{noteNamesResponse.Value.ScaleName}[/] in mode [green]{noteNamesResponse.Value.Mode}[/]");
@@ -36,7 +33,7 @@ public class IdentifyScaleCommand : AsyncCommand<IdentifyScaleCommand.IdentifySc
         else
         { 
             var intervalNamesRequest = new IdentifyScaleFromIntervalNamesRequest(settings.Symbols);
-            var intervalNamesResponse = await _mediator.Send(intervalNamesRequest, cancellationToken);
+            var intervalNamesResponse = await mediator.Send(intervalNamesRequest, cancellationToken);
             if (intervalNamesResponse.IsSuccess)
             {
                 AnsiConsole.MarkupLine($"[green]SUCCESS[/]: Scale was identified as [green]{intervalNamesResponse.Value.ScaleName}[/] in mode [green]{intervalNamesResponse.Value.Mode}[/]");

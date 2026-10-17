@@ -10,6 +10,7 @@ public class Fretboard(IDictionary<int, int> strings, int numberOfFrets) : Value
 {
     public Dictionary<int, int> OpenStrings { get; init; } = strings.ToDictionary();
     public int NumberOfFrets { get; init; } = numberOfFrets;
+
     public HashSet<Fret> FindPitch(int pitch) => FindPitches([pitch]);
 
     /// <summary>

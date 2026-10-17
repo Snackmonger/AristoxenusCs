@@ -1,7 +1,7 @@
 using Aristoxenus.Core.Data;
 using Aristoxenus.Core.Utilities;
 
-namespace Aristoxenus.Tests;
+namespace Aristoxenus.Core.Tests;
 
 [TestClass]
 public class PatternHelperTests

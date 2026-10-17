@@ -6,7 +6,7 @@ namespace Aristoxenus.Core.Interfaces;
 /// A strategy for generating a sequence of pitches based around a
 /// target pitch that will be provided at runtime.
 /// </summary>
-public interface IPitchSequenceStrategy
+public interface IPitchPatternStrategy
 {
     /// <summary>
     /// Return a list of <see cref="Pitch"/> objects representing a sequence
