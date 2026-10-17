@@ -29,8 +29,9 @@ public static partial class SymbolHelper
         // This handles absurd chord names, e.g. Cmaj7add###11.
         IReadOnlyList<string> accidentalCombinations = (
             from accidentalSymbol in new[] { Symbols.Sharp, Symbols.Flat }
-            from repetitions in Enumerable.Range(1, Numbers.MaxAccidentals).Reverse()
-            select string.Concat(Enumerable.Repeat(accidentalSymbol, repetitions)))
+            from repetitions in Enumerable.Range(1, Numbers.SemitonesInOctave - Numbers.IndexOffset).Reverse()
+            select string.Concat(Enumerable.Repeat(accidentalSymbol, repetitions))
+        )
             .Append(string.Empty)
             .ToList();
 

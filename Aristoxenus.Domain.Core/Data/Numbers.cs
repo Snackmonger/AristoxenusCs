@@ -5,7 +5,7 @@
 /// </summary>
 public class Numbers
 {
-    // Misc values to avoid common magic numbers
+    // Misc values to avoid common numbers
     public const int IndexOffset = 1;
     public const int Zero = 0;
 
@@ -24,7 +24,6 @@ public class Numbers
     public const double MaxFrequency = 7902.13;
     public const int MinOctaveNumber = 1;
     public const int MaxOctaveNumber = 8;
-    public const int MaxAccidentals = SemitonesInOctave - IndexOffset;
     public const int CentralMidiNumber = 69;
     public const double CentralFrequency = 440.0;
 }

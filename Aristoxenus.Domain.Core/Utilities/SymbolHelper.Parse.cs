@@ -98,6 +98,6 @@ public static partial class SymbolHelper
             RegularExpressions.SharpSymbol.Count(accidentalSymbol)
             - RegularExpressions.FlatSymbol.Count(accidentalSymbol)
         )
-        % Numbers.MaxAccidentals;
+        % Numbers.SemitonesInOctave;
 
 }

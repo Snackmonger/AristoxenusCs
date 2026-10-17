@@ -14,9 +14,9 @@ public static partial class SymbolHelper
         if (accidental == Numbers.Zero)
             return string.Empty;
         if (accidental > Numbers.Zero)
-            return string.Concat(Enumerable.Repeat(Symbols.Sharp, Math.Abs(accidental % Numbers.MaxAccidentals)));
+            return string.Concat(Enumerable.Repeat(Symbols.Sharp, Math.Abs(accidental % Numbers.SemitonesInOctave)));
         else
-            return string.Concat(Enumerable.Repeat(Symbols.Flat, Math.Abs(accidental % Numbers.MaxAccidentals)));
+            return string.Concat(Enumerable.Repeat(Symbols.Flat, Math.Abs(accidental % Numbers.SemitonesInOctave)));
     }
 
     /// <summary>
