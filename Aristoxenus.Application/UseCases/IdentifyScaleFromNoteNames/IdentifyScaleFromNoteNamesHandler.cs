@@ -2,8 +2,8 @@
 
 using MediatR;
 
-using Aristoxenus.Core.Errors;
-using Aristoxenus.Core.Models;
+using Aristoxenus.Domain.Core.Errors;
+using Aristoxenus.Domain.Core.Models;
 
 namespace Aristoxenus.Application.UseCases.IdentifyScaleFromNoteNames;
 

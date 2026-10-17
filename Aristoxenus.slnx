@@ -5,12 +5,12 @@
     <File Path="README.md" />
   </Folder>
   <Project Path="Aristoxenus.Application/Aristoxenus.Application.csproj" />
-  <Project Path="Aristoxenus.CommandLine/Aristoxenus.Presentation.CommandLine.csproj" />
-  <Project Path="Aristoxenus.Core/Aristoxenus.Core.csproj" />
-  <Project Path="Aristoxenus.Guitar/Aristoxenus.Core.Guitar.csproj" Id="6104ba1f-c71d-4ba1-b3da-d8768e721d04" />
-  <Project Path="Aristoxenus.Language/Aristoxenus.Core.Language.csproj" Id="1e159644-f3cd-4099-90d4-814dbbe460a1" />
-  <Project Path="Aristoxenus.MIDI/Aristoxenus.Core.MIDI.csproj" Id="2302fafe-1422-4511-af25-5eee25ec27f2" />
-  <Project Path="Aristoxenus.Tests/Aristoxenus.Core.Tests.csproj" />
-  <Project Path="Aristoxenus.WinForms/Aristoxenus.Presentation.WinForms.csproj" Id="d8c51655-fe2c-4053-b4ec-9315974a4e08" />
+  <Project Path="Aristoxenus.Domain.Core.Tests/Aristoxenus.Domain.Core.Tests.csproj" />
+  <Project Path="Aristoxenus.Domain.Core/Aristoxenus.Domain.Core.csproj" />
+  <Project Path="Aristoxenus.Domain.Guitar/Aristoxenus.Domain.Guitar.csproj" />
+  <Project Path="Aristoxenus.Domain.Language/Aristoxenus.Domain.Language.csproj" />
+  <Project Path="Aristoxenus.Domain.MIDI/Aristoxenus.Domain.MIDI.csproj" />
+  <Project Path="Aristoxenus.Presentation.CommandLine/Aristoxenus.Presentation.CommandLine.csproj" />
+  <Project Path="Aristoxenus.Presentation.WinForms/Aristoxenus.Presentation.WinForms.csproj" />
   <Project Path="Libraries/Libraries.csproj" Id="1d201ecf-6813-4ba5-ae0b-fdb15e78357c" />
 </Solution>

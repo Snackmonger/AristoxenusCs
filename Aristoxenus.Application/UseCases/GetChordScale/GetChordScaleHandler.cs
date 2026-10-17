@@ -2,8 +2,8 @@
 
 using MediatR;
 
-using Aristoxenus.Core.Data;
-using Aristoxenus.Core.Models;
+using Aristoxenus.Domain.Core.Data;
+using Aristoxenus.Domain.Core.Models;
 
 
 namespace Aristoxenus.Application.UseCases.GetChordScale;
