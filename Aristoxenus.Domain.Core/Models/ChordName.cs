@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+
 using Aristoxenus.Domain.Core.Bases;
 using Aristoxenus.Domain.Core.Data;
 using Aristoxenus.Domain.Core.Errors;
@@ -12,45 +13,35 @@ namespace Aristoxenus.Domain.Core.Models;
 /// structure over a given root note (but does not account for concrete
 /// voicings).
 /// </summary>
-public class ChordName : ValueObject, ISymbolSerializable<ChordName>
+public class ChordName(NoteName root, IntervalStructure intervals) : ValueObject, ISymbolSerializable<ChordName>
 {
 
     /// <summary>
     /// The note name that serves as the root of the chord.
     /// </summary>
-    public readonly NoteName Root;
+    public readonly NoteName Root = root;
 
     /// <summary>
     /// The intervals that exist above the chord root.
     /// </summary>
-    public readonly IntervalStructure Intervals;
+    public readonly IntervalStructure Intervals = intervals;
 
     /// <summary>
     /// Flag that indicates whether the chord is diminished.
     /// </summary>
-    public readonly bool IsDiminished ;
+    public  bool IsDiminished => Intervals.IsDiminished;
     /// <summary>
     /// Flag that indicates whether the chord is dominant.
     /// </summary>
-    public readonly bool IsDominant;
+    public bool IsDominant => Intervals.IsDominant;
     /// <summary>
     /// Flag that indicates whether the chord has a perfect fifth.
     /// </summary>
-    public readonly bool HasPerfectFifth;
+    public bool HasPerfectFifth => Intervals.HasPerfectFifth;
     /// <summary>
     /// Flag that indicates whether the chord has an altered fifth.
     /// </summary>
-    public readonly bool HasAlteredFifth;
-
-    public ChordName(NoteName root, IntervalStructure intervals)
-    {
-        Root = root;
-        Intervals = intervals;
-        IsDiminished = Intervals.IsDiminished;
-        IsDominant = Intervals.IsDominant;
-        HasPerfectFifth = Intervals.HasPerfectFifth;
-        HasAlteredFifth = Intervals.HasAlteredFifth;
-    }
+    public bool HasAlteredFifth => Intervals.HasAlteredFifth;
 
     /// <summary>
     /// Get the note names that represent the intervals of the chord, relative
@@ -62,9 +53,9 @@ public class ChordName : ValueObject, ISymbolSerializable<ChordName>
     public List<NoteName> GetNoteNames()
         => [.. Intervals.Select(Root.NoteNameAbove)];
 
-    public Chord Reify(ChordConfiguration configuration, int octave)
+    public Chord Reify(ChordVoicing voicing, int octave)
     {
-        throw new NotImplementedException();
+        return new(this, voicing, octave);
     }
 
 
