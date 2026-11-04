@@ -1,5 +1,7 @@
 # Aristoxenus
 
+NOTE: This repo is a work in progress that is liable to change at any moment.
+
 ## Abstract 
 
 Object-oriented music manipulation.
