@@ -39,7 +39,6 @@ namespace Aristoxenus.Domain.Core.Utilities
         public static int NormalizeAccidental(int accidental) => accidental % Numbers.SemitonesInOctave;
         // NOTE: Most people will not want so many accidentals, so having a way to clamp this 
         // to a runtime constant instead of a compile-time constant would be useful.
-        // However, this is not currently implemented.
 
     }
 }

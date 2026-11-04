@@ -26,16 +26,17 @@ namespace Aristoxenus.Domain.Core.Models
         public NoteName RootName => Name.Root;
 
 
-        public List<Pitch> AscendingArpeggio(int octaves)
-        {
-            Pitch rootPitch = new(RootName, OctaveNumber);
-            List<Pitch> pitches = [];
-            for (int i = 0; i < octaves; i++)
-            {
-                
-            }
-            return pitches;
-        }
+        //public List<Pitch> AscendingArpeggio()
+        //{
+        //    Pitch rootPitch = new(RootName, OctaveNumber);
+        //    IEnumerable<Interval> intervals = Voicing.Apply(Name.Intervals);
+        //    List<Pitch> pitches = [];
+        //    foreach (Interval interval in intervals)
+        //    {
+        //        pitches.Add(rootPitch.GetPitchAbove(interval));
+        //    }
+        //    return pitches;
+        //}
 
         protected override IEnumerable<object?> GetEqualityComponents()
         {
