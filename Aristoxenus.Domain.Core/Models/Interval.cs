@@ -3,21 +3,22 @@ using Aristoxenus.Domain.Core.Data;
 using Aristoxenus.Domain.Core.Errors;
 using Aristoxenus.Domain.Core.Utilities;
 
+
 namespace Aristoxenus.Domain.Core.Models;
 
 /// <summary>
 /// An interval
 /// </summary>
-public class Interval : ValueObject
+public class Interval(ScaleDegree name) : ValueObject
 {
     /// <summary>
     /// The name of the interval, which is derived from the scale degree 
     /// that corresponds to the interval when ascending.
     /// </summary>
-    public readonly ScaleDegree Name;
+    public readonly ScaleDegree Name = name;
 
 
-    public readonly int Value;
+    public int Value => NomenclatureHelper.GetIntervalValueFromDegreeName(Name);
 
     /// <summary>
     /// The raw value of the interval's name's degree.
@@ -29,19 +30,6 @@ public class Interval : ValueObject
     /// </summary>
     public int Accidental => Name.Accidental;
 
-    /// <summary>
-    /// The raw value of the interval, if it were expressed in the first
-    /// octave (e.g. a ninth becomes a second, a second remains a second etc.)
-    /// </summary>
-    public int FirstOctaveValue
-        => Value % Numbers.SemitonesInOctave;
-
-    /// <summary>
-    /// The raw value of the interval, if it were expressed in the second
-    /// octave (e.g. a second becomes a ninth, a ninth remains a ninth etc.)
-    /// </summary>
-    public int SecondOctaveValue
-        => FirstOctaveValue + Numbers.SemitonesInOctave;
 
     /// <summary>
     /// The quality of the interval, expressed as a formal name, e.g. 
@@ -53,7 +41,7 @@ public class Interval : ValueObject
     /// <summary>
     /// The reciprocal of this interval.
     /// </summary>
-    public Interval Reciprocal 
+    public Interval Reciprocal
         => NomenclatureHelper.GetReciprocalInterval(this);
 
     /// <summary>
@@ -61,23 +49,6 @@ public class Interval : ValueObject
     /// must have.
     /// </summary>
     public static Interval Unison => new((1, 0));
-
-    public Interval(ScaleDegree name, int value)
-    {
-        int impliedValue = NomenclatureHelper.GetIntervalValueFromDegreeName(name);
-        if (impliedValue % Numbers.SemitonesInOctave != value % Numbers.SemitonesInOctave)
-        {
-            throw new IntervalValueRepresentationMismatch(value, impliedValue, name.ToSymbol());
-        }
-        Name = name;
-        Value = value;
-    }
-
-    public Interval(ScaleDegree name)
-    {
-        Value = NomenclatureHelper.GetIntervalValueFromDegreeName(name);
-        Name = name;
-    }
 
 
     /// <summary>
@@ -99,26 +70,23 @@ public class Interval : ValueObject
     /// <summary>
     /// Widen this interval by the given number of octaves. For example, 
     /// widening a 2 yields a 9. 
-    /// 
-    /// NOTE: For intervals of more than two octaves, their names will 
-    /// be restricted to two octaves, but their values will encode their 
-    /// actual width.
     /// </summary>
     public Interval Widen(int octaves)
     {
         octaves = Math.Abs(octaves);
         if (octaves > Numbers.MaxOctaveNumber)
+        {
             throw new MaximumOctavesExceeded();
+        }
 
         int degree = Degree;
         int value = Value;
 
-        if (Degree <= Numbers.NotesInOctave)
-            degree += Numbers.NotesInOctave;
+        degree += (octaves * Numbers.NotesInOctave);
 
         value += (octaves * Numbers.SemitonesInOctave);
 
-        return FromExpectedValue(degree, value);
+        return FromExpectedValue(degree, value); 
     }
 
     /// <summary>
@@ -129,15 +97,19 @@ public class Interval : ValueObject
     {
         octaves = Math.Abs(octaves);
         if (Value / Numbers.SemitonesInOctave < octaves)
+        {
             octaves = Value / Numbers.SemitonesInOctave;
+        }
 
         int degree = Degree;
         int value = Value;
 
-        if (degree is > Numbers.NotesInOctave and <= Numbers.NotesInDoubleOctave)
-            degree -= Numbers.NotesInOctave;
+        if (degree is > Numbers.NotesInOctave)
+        {
+            degree -= (octaves * Numbers.NotesInOctave);
+            value -= (octaves * Numbers.SemitonesInOctave);
+        }
 
-        value -= (octaves * Numbers.SemitonesInOctave);
 
         return FromExpectedValue(degree, value);
 

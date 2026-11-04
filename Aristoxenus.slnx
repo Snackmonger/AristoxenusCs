@@ -11,6 +11,7 @@
   <Project Path="Aristoxenus.Domain.Guitar/Aristoxenus.Domain.Guitar.csproj" />
   <Project Path="Aristoxenus.Domain.Language/Aristoxenus.Domain.Language.csproj" />
   <Project Path="Aristoxenus.Domain.MIDI/Aristoxenus.Domain.MIDI.csproj" />
+  <Project Path="Aristoxenus.Infrastructure.InMemory/Aristoxenus.Infrastructure.InMemory.csproj" Id="9c3e4b12-3f2b-4bd5-886e-7ad855f6a2a7" />
   <Project Path="Aristoxenus.Presentation.CommandLine/Aristoxenus.Presentation.CommandLine.csproj" />
   <Project Path="Aristoxenus.Presentation.WinForms/Aristoxenus.Presentation.WinForms.csproj" />
   <Project Path="Libraries/Libraries.csproj" Id="1d201ecf-6813-4ba5-ae0b-fdb15e78357c" />
