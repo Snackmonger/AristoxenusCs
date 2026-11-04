@@ -65,21 +65,21 @@ public class NoteName(int pitchClass, int accidental) : ValueObject, ISymbolSeri
     /// the given note name.
     /// </summary>
     public NoteName NoteNameBelow(string interval)
-        => NoteNameBelow(Interval.FromScaleDegreeSymbol(interval));
+        => NoteNameBelow(Interval.FromSymbol(interval));
 
     /// <summary>
     /// Calculate the note name that lies at the specified interval above 
     /// the given note name.
     /// </summary>
     public NoteName NoteNameAbove(Interval interval) 
-        => NomenclatureHelper.GetNoteNameAbove(this, interval.Name);
+        => NomenclatureHelper.GetNoteNameAbove(this, interval);
 
     /// <summary>
     /// Calculate the note name that lies at the specified interval
     /// above the given note name.
     /// </summary>
     public NoteName NoteNameAbove(string interval) 
-        => NoteNameAbove(Interval.FromScaleDegreeSymbol(interval));
+        => NoteNameAbove(Interval.FromSymbol(interval));
 
     /// <summary>
     /// Calculate the interval that exists between this note name and a 

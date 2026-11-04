@@ -57,12 +57,12 @@ public class IntervalStructure : ValueObject, IReadOnlySet<Interval>, ISymbolSer
         foreach (Interval interval in intervals)
         {
             if (sanitized.Contains(interval) || sanitized.Select(i => i.Value).Contains(interval.Value))
-                throw new IntervalStructureHasDuplicates(intervals.Where(it => it.Value == interval.Value).Select(i => i.Name.ToSymbol()));
+                throw new IntervalStructureHasDuplicates(intervals.Where(it => it.Value == interval.Value).Select(i => i.ToSymbol()));
             sanitized.Add(interval);
         }
         Intervals = [.. sanitized];
         IntervalSymbols = [.. NomenclatureHelper
-            .SortDegreeNames([.. Intervals.Select(x => x.Name)])
+            .SortDegreeNames([.. Intervals])
             .Select(s => SymbolHelper.CreateScaleDegreeSymbol(s))
         ];
         Suspensions = [];
@@ -108,7 +108,7 @@ public class IntervalStructure : ValueObject, IReadOnlySet<Interval>, ISymbolSer
         foreach (Interval interval in intervals)
         {
             if (sanitized.Contains(interval) || sanitized.Select(i => i.Value).Contains(interval.Value))
-                throw new IntervalStructureHasDuplicates(intervals.Select(i => i.Name.ToSymbol()));
+                throw new IntervalStructureHasDuplicates(intervals.Select(i => i.ToSymbol()));
             sanitized.Add(interval);
         }
         return new IntervalStructure(sanitized);
@@ -120,7 +120,7 @@ public class IntervalStructure : ValueObject, IReadOnlySet<Interval>, ISymbolSer
     /// <param name="scaleDegreeSymbols"></param>
     /// <returns></returns>
     public static IntervalStructure FromScaleDegreeSymbols(IEnumerable<string> scaleDegreeSymbols)
-        => CreateNew(scaleDegreeSymbols.Select(Interval.FromScaleDegreeSymbol));
+        => CreateNew(scaleDegreeSymbols.Select(Interval.FromSymbol));
 
     /// <summary>
     /// Treat the collection of integers as a single scale. If the scale is
@@ -207,7 +207,7 @@ public class IntervalStructure : ValueObject, IReadOnlySet<Interval>, ISymbolSer
     /// structure.
     /// </summary>
     public string PrettyPrintSymbols()
-        => string.Join(", ", Intervals.Select(i => i.Name.ToSymbol()));
+        => string.Join(", ", Intervals.Select(i => i.ToSymbol()));
 
 
     /// <summary>
@@ -216,7 +216,7 @@ public class IntervalStructure : ValueObject, IReadOnlySet<Interval>, ISymbolSer
     /// </summary>
     public string ToChordSymbol()
         => SymbolHelper.CreateChordSymbol(
-                Intervals.Select(i => (i.Name.Degree, i.Name.Accidental)),
+                Intervals.Select(i => (i.Degree, i.Accidental)),
                 style: null
             );
 
@@ -263,7 +263,7 @@ public class IntervalStructure : ValueObject, IReadOnlySet<Interval>, ISymbolSer
     protected override IEnumerable<object?> GetEqualityComponents()
     {
         foreach ((int, int) interval in NomenclatureHelper
-            .SortIntervalNames(Intervals.Select(it => (it.Name.Degree, it.Name.Accidental)))
+            .SortIntervalNames(Intervals.Select(it => (it.Degree, it.Accidental)))
         )
         {
             yield return interval;

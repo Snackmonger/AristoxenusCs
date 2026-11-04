@@ -37,7 +37,7 @@ namespace Aristoxenus.Domain.Core.Tests
         [DataRow("C7", "22")]
         public void GetPitchAbove_C4InBass_ReturnsCorrectPitch(string expectedPitch, string scaleDegree)
         {
-            Pitch p = C4.GetPitchAbove(Interval.FromScaleDegreeSymbol(scaleDegree));
+            Pitch p = C4.GetPitchAbove(Interval.FromSymbol(scaleDegree));
 
             Assert.AreEqual(expectedPitch, p.ToSymbol());
         }
@@ -68,7 +68,7 @@ namespace Aristoxenus.Domain.Core.Tests
         [DataRow("B7", "22")]
         public void GetPitchAbove_B4InBass_ReturnsCorrectPitch(string expectedPitch, string scaleDegree)
         {
-            Pitch p = B4.GetPitchAbove(Interval.FromScaleDegreeSymbol(scaleDegree));
+            Pitch p = B4.GetPitchAbove(Interval.FromSymbol(scaleDegree));
 
             Assert.AreEqual(expectedPitch, p.ToSymbol());
         }

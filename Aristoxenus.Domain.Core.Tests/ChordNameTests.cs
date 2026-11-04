@@ -85,7 +85,7 @@ public sealed class ChordNameTests
     {
         ChordName chordName = ChordName.FromSymbol(chordSymbol);
 
-        List<string> intervals = [.. chordName.Intervals.Select(it => it.Name.ToSymbol())];
+        List<string> intervals = [.. chordName.Intervals.Select(it => it.ToSymbol())];
 
         CollectionAssert.AreEquivalent(expectedIntervals, intervals);
     }
@@ -135,7 +135,7 @@ public sealed class ChordNameTests
     [DataRow("C7sus4", new[] { "1", "4", "5", "b7" })]
     public void ToSymbol_CNoteNameRoot_ReturnsCorrectSymbol(string expectedChordSymbol, string[] intervals)
     {
-        IntervalStructure intervalStructure = new(intervals.Select(Interval.FromScaleDegreeSymbol));
+        IntervalStructure intervalStructure = new(intervals.Select(Interval.FromSymbol));
         ChordName chordName = new(NoteName_C, intervalStructure);
         string chordSymbol = chordName.ToSymbol();
         Assert.AreEqual(expectedChordSymbol, chordSymbol);

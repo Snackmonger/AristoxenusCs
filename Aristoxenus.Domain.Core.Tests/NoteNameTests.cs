@@ -131,7 +131,7 @@ public sealed class NoteNameTests
     [DataRow("7", "F#")]
     public void IntervalAbove_GNaturalInBass_ReturnsCorrectInterval(string expectedScaleDegreeSymbol, string noteNameAboveGNatural)
     {
-        Interval expectedInterval = Interval.FromScaleDegreeSymbol(expectedScaleDegreeSymbol);
+        Interval expectedInterval = Interval.FromSymbol(expectedScaleDegreeSymbol);
         NoteName inputNoteName = NoteName.FromSymbol(noteNameAboveGNatural);
 
         Interval actualInterval = NoteName_GNatural.IntervalAbove(inputNoteName);
@@ -162,7 +162,7 @@ public sealed class NoteNameTests
     [DataRow("7", "G#")]
     public void IntervalAbove_ANaturalInBass_ReturnsCorrectInterval(string expectedScaleDegreeSymbol, string noteNameAboveANatural)
     {
-        Interval expectedInterval = Interval.FromScaleDegreeSymbol(expectedScaleDegreeSymbol);
+        Interval expectedInterval = Interval.FromSymbol(expectedScaleDegreeSymbol);
         NoteName inputNoteName = NoteName.FromSymbol(noteNameAboveANatural);
 
         Interval actualInterval = NoteName_ANatural.IntervalAbove(inputNoteName);
@@ -235,7 +235,7 @@ public sealed class NoteNameTests
     public void NoteNameAbove_GNaturalInBass_ReturnsCorrectNoteNameAbove(string expectedNoteNameSymbol, string intervalSymbol)
     {
         NoteName expectedNoteName = NoteName.FromSymbol(expectedNoteNameSymbol);
-        Interval inputInterval = Interval.FromScaleDegreeSymbol(intervalSymbol);
+        Interval inputInterval = Interval.FromSymbol(intervalSymbol);
 
         NoteName actualNoteName = NoteName_GNatural.NoteNameAbove(inputInterval);
 
@@ -267,7 +267,7 @@ public sealed class NoteNameTests
     public void NoteNameAbove_GSharpInBass_ReturnsCorrectNoteNameAbove(string expectedNoteNameSymbol, string intervalSymbol)
     {
         NoteName expectedNoteName = NoteName.FromSymbol(expectedNoteNameSymbol);
-        Interval inputInterval = Interval.FromScaleDegreeSymbol(intervalSymbol);
+        Interval inputInterval = Interval.FromSymbol(intervalSymbol);
 
         NoteName actualNoteName = NoteName_GSharp.NoteNameAbove(inputInterval);
 
@@ -298,7 +298,7 @@ public sealed class NoteNameTests
     public void NoteNameAbove_ANaturalInBass_ReturnsCorrectNoteNameAbove(string expectedNoteNameSymbol, string intervalSymbol)
     {
         NoteName expectedNoteName = NoteName.FromSymbol(expectedNoteNameSymbol);
-        Interval inputInterval = Interval.FromScaleDegreeSymbol(intervalSymbol);
+        Interval inputInterval = Interval.FromSymbol(intervalSymbol);
 
         NoteName actualNoteName = NoteName_ANatural.NoteNameAbove(inputInterval);
 
@@ -335,7 +335,7 @@ public sealed class NoteNameTests
     public void NoteNameAbove_FNaturalInBass_ReturnsCorrectNoteNameAbove(string expectedNoteNameSymbol, string intervalSymbol)
     {
         NoteName expectedNoteName = NoteName.FromSymbol(expectedNoteNameSymbol);
-        Interval inputInterval = Interval.FromScaleDegreeSymbol(intervalSymbol);
+        Interval inputInterval = Interval.FromSymbol(intervalSymbol);
 
         NoteName actualNoteName = NoteName_FNatural.NoteNameAbove(inputInterval);
 

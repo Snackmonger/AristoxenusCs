@@ -270,7 +270,6 @@ public static class NomenclatureHelper
     public static string GetIntervalQuality(int degree, int value)
     {
         value = value % (Numbers.SemitonesInDoubleOctave + 1);
-        // Ugly solution but it works. 
         string? quality = degree switch
         {
             1 => value switch
