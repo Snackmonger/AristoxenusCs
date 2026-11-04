@@ -1,34 +1,27 @@
 ﻿using Aristoxenus.Domain.Core.Bases;
 using Aristoxenus.Domain.Core.Data;
 using Aristoxenus.Domain.Core.Errors;
+using Aristoxenus.Domain.Core.Interfaces;
 using Aristoxenus.Domain.Core.Utilities;
-
 
 namespace Aristoxenus.Domain.Core.Models;
 
-/// <summary>
-/// An interval
-/// </summary>
-public class Interval(ScaleDegree name) : ValueObject
+
+public class Interval(int degree, int accidental) : ValueObject, ISymbolSerializable<Interval>
 {
-    /// <summary>
-    /// The name of the interval, which is derived from the scale degree 
-    /// that corresponds to the interval when ascending.
-    /// </summary>
-    public readonly ScaleDegree Name = name;
+    public Interval((int Degree, int Accidental) interval) : this(interval.Degree, interval.Accidental) { }
 
-
-    public int Value => NomenclatureHelper.GetIntervalValueFromDegreeName(Name);
+    public int Value => NomenclatureHelper.GetIntervalValueFromDegreeName((Degree, Accidental));
 
     /// <summary>
     /// The raw value of the interval's name's degree.
     /// </summary>
-    public int Degree => Name.Degree;
+    public int Degree => NormalizationHelper.NormalizeDegree(degree);
 
     /// <summary>
     /// The raw value of the interval's name's accidental.
     /// </summary>
-    public int Accidental => Name.Accidental;
+    public int Accidental => NormalizationHelper.NormalizeAccidental(accidental);
 
 
     /// <summary>
@@ -48,15 +41,7 @@ public class Interval(ScaleDegree name) : ValueObject
     /// The unison, which is the default interval that all interval structures 
     /// must have.
     /// </summary>
-    public static Interval Unison => new((1, 0));
-
-
-    /// <summary>
-    /// Create an interval from the given interval name symbol, with 
-    /// an inferred value.
-    /// </summary>
-    public static Interval FromScaleDegreeSymbol(string scaleDegreeSymbol)
-        => new(ScaleDegree.FromSymbol(scaleDegreeSymbol));
+    public static Interval Unison => new(1, 0);
 
 
     /// <summary>
@@ -86,7 +71,7 @@ public class Interval(ScaleDegree name) : ValueObject
 
         value += (octaves * Numbers.SemitonesInOctave);
 
-        return FromExpectedValue(degree, value); 
+        return FromExpectedValue(degree, value);
     }
 
     /// <summary>
@@ -115,18 +100,21 @@ public class Interval(ScaleDegree name) : ValueObject
 
     }
 
+    public static Interval FromSymbol(string scaleDegreeSymbol)
+    {
+        (int degree, int accidental) = SymbolHelper.ParseScaleDegreeSymbol(scaleDegreeSymbol);
+        return new(degree, accidental);
+    }
+
+    public string ToSymbol()
+        => SymbolHelper.CreateScaleDegreeSymbol((Degree, Accidental));
+
     protected override IEnumerable<object?> GetEqualityComponents()
     {
         yield return Degree;
         yield return Accidental;
-        yield return Value;
     }
 
-    public static implicit operator Interval(ScaleDegree scaleDegree)
-        => FromScaleDegreeSymbol(scaleDegree);
-
-    public static implicit operator ScaleDegree(Interval interval)
-        => interval.Name;
 
     public static implicit operator Interval((int Degree, int Accidental) interval)
         => new(interval);
@@ -135,8 +123,8 @@ public class Interval(ScaleDegree name) : ValueObject
         => (interval.Degree, interval.Accidental);
 
     public static implicit operator string(Interval interval)
-        => interval.Name.ToSymbol();
+        => interval.ToSymbol();
 
     public static implicit operator Interval(string intervalName)
-        => FromScaleDegreeSymbol(intervalName);
+        => FromSymbol(intervalName);
 }

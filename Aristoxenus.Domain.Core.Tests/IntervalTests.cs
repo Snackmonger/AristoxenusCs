@@ -49,11 +49,11 @@ namespace Aristoxenus.Domain.Core.Tests
         [DataRow("28", 3, "7")]
         public void Widen_LegalInterval_By_LegalNumberOfOctaves_ReturnsCorrectInterval(string expectedInterval, int octaves, string interval)
         {
-            Interval i = Interval.FromScaleDegreeSymbol(interval);
+            Interval i = Interval.FromSymbol(interval);
             
             Interval widened = i.Widen(octaves);
 
-            Assert.AreEqual(expectedInterval, widened.Name.ToSymbol());
+            Assert.AreEqual(expectedInterval, widened.ToSymbol());
 
         }
 
@@ -108,17 +108,17 @@ namespace Aristoxenus.Domain.Core.Tests
         [DataRow("7", 3, "28")]
         public void Narrow_LegalInterval_By_LegalNumberOfOctaves_ReturnsCorrectInterval(string expectedInterval, int octaves, string interval)
         {
-            Interval i = Interval.FromScaleDegreeSymbol(interval);
+            Interval i = Interval.FromSymbol(interval);
 
             Interval narrowed = i.Narrow(octaves);
 
-            Assert.AreEqual(expectedInterval, narrowed.Name.ToSymbol());
+            Assert.AreEqual(expectedInterval, narrowed.ToSymbol());
         }
 
         [TestMethod]
         public void Widen_LegalInterval_By_ExcessiveNumberOfOctaves_ThrowsException()
         {
-            Interval i = Interval.FromScaleDegreeSymbol("1");
+            Interval i = Interval.FromSymbol("1");
 
             Assert.Throws<MaximumOctavesExceeded>(() => i.Widen(9));
         }
@@ -126,9 +126,9 @@ namespace Aristoxenus.Domain.Core.Tests
         [TestMethod]
         public void Widen_LegalInterval_By_NegativeNumberOfOctaves_ReturnsCorrectedInterval()
         {
-            Interval i = Interval.FromScaleDegreeSymbol("1");
+            Interval i = Interval.FromSymbol("1");
 
-            Assert.AreEqual("8", i.Widen(-1).Name.ToSymbol());
+            Assert.AreEqual("8", i.Widen(-1).ToSymbol());
         }
     }
 }
