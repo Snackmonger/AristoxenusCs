@@ -1,6 +1,8 @@
-﻿namespace Aristoxenus.Domain.Core.Models
+﻿using Aristoxenus.Domain.Core.Bases;
+
+namespace Aristoxenus.Domain.Core.Models
 {
-    public class Chord(ChordName name, ChordVoicing voicing, int octave)
+    public class Chord(ChordName name, ChordVoicing voicing, int octave) : ValueObject
     {
         /// <summary>
         /// The name of the chord, which provides its basic root position 
@@ -24,17 +26,22 @@
         public NoteName RootName => Name.Root;
 
 
-        public Pitch RootPitch => new(Name.Root, OctaveNumber);
-
         public List<Pitch> AscendingArpeggio(int octaves)
         {
+            Pitch rootPitch = new(RootName, OctaveNumber);
             List<Pitch> pitches = [];
-            Pitch rootPitch = RootPitch;
             for (int i = 0; i < octaves; i++)
             {
-                // TODO
+                
             }
             return pitches;
+        }
+
+        protected override IEnumerable<object?> GetEqualityComponents()
+        {
+            yield return Name;
+            yield return Voicing;
+            yield return OctaveNumber;
         }
     }
 }

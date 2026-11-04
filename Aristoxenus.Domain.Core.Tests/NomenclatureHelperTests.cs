@@ -44,7 +44,28 @@ public sealed class NomenclatureHelperTests
     [DataRow(18, "#11")]
     [DataRow(18, "b12")]
     [DataRow(19, "12")]
-    public void GetIntervalValueFromName_ValidInput_CorrectOutput(int expectedValue, string intervalSymbol)
+    [DataRow(20, "#12")]
+    [DataRow(20, "b13")]
+    [DataRow(21, "13")]
+    [DataRow(22, "#13")]
+    [DataRow(22, "b14")]
+    [DataRow(23, "14")]
+    [DataRow(24, "15")]
+    [DataRow(25, "b16")]
+    [DataRow(26, "16")]
+    [DataRow(27, "b17")]
+    [DataRow(28, "17")]
+    [DataRow(29, "#17")]
+    [DataRow(29, "18")]
+    [DataRow(31, "19")]
+    [DataRow(32, "#19")]
+    [DataRow(32, "b20")]
+    [DataRow(33, "20")]
+    [DataRow(34, "#20")]
+    [DataRow(34, "b21")]
+    [DataRow(35, "21")]
+    [DataRow(36, "22")]
+    public void GetIntervalValueFromDegreeName_ValidInput_CorrectOutput(int expectedValue, string intervalSymbol)
     {
         (int degree, int accidentals) = SymbolHelper.ParseScaleDegreeSymbol(intervalSymbol);
         int actualValue = NomenclatureHelper.GetIntervalValueFromDegreeName((degree, accidentals));

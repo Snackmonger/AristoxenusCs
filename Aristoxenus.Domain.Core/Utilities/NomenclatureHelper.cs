@@ -16,15 +16,6 @@ public static class NomenclatureHelper
      * 
      * E.g. 5 == 5.0, b5 == 4.9, #5 == 5.1, ##5 == 5.2, etc.
      */
-    // 05-June-2026: Revised logic of ordering. Shouldn't affect anything
-    // except very weird scales. Rules are:
-    // - Any natural gets its integer.
-    // - Sharps get 0.1 added to the natural.
-    // - Flats get 0.1 removed from the natural.
-    // - Naturally, this system means that there would be collisions for 
-    // extreme accidentals more than +/- 5 steps, but in practice the intervals
-    // will be derived from chords and scales in context, so such accidentals
-    // are not really expected and accounted for on an ad hoc basis.
     public static double GetIntervalSortValue(DegreeName interval)
         => interval.Degree + (interval.Accidental * 0.1);
 
@@ -56,17 +47,13 @@ public static class NomenclatureHelper
     /// </summary>
     public static int GetIntervalValueFromDegreeName(DegreeName intervalName)
     {
-        int degree;
-        int naturalValue;
+        int naturalValue; 
         int scalingFactor = 0;
         if (intervalName.Degree > Numbers.NotesInOctave)
         {
-            degree = intervalName.Degree % Numbers.NotesInOctave;
-            scalingFactor = intervalName.Degree / Numbers.NotesInOctave;
+            scalingFactor = (intervalName.Degree - Numbers.IndexOffset) / Numbers.NotesInOctave;
         }
-        else
-            degree = intervalName.Degree;
-        naturalValue = RawScalePatterns.Diatonic[degree - Numbers.IndexOffset] + (scalingFactor * Numbers.SemitonesInOctave);
+        naturalValue = RawScalePatterns.Diatonic[(intervalName.Degree - Numbers.IndexOffset) % Numbers.NotesInOctave] + (scalingFactor * Numbers.SemitonesInOctave);
         return naturalValue + intervalName.Accidental;
     }
 
@@ -97,8 +84,9 @@ public static class NomenclatureHelper
     /// </summary>
     public static NoteName GetNoteNameAbove(NoteName noteName, DegreeName degreeName)
     {
+        int i = (degreeName.Degree - Numbers.IndexOffset) % Numbers.NotesInOctave;
         int intervalValue = RawScalePatterns
-            .Diatonic[degreeName.Degree - Numbers.IndexOffset] + degreeName.Accidental;
+            .Diatonic[i] + degreeName.Accidental;
 
         List<(int alphabeticIndex, int accidentals)> diatonicScaleFromThisTonic
             = CalculateHeptatonicNames(noteName, RawScalePatterns.Diatonic);
@@ -106,7 +94,7 @@ public static class NomenclatureHelper
         int diatonicValueAtIntervalDegree = RawScalePatterns
             .Diatonic[(degreeName.Degree - Numbers.IndexOffset) % Numbers.NotesInOctave];
 
-        NoteName newName = diatonicScaleFromThisTonic[degreeName.Degree - Numbers.IndexOffset];
+        NoteName newName = diatonicScaleFromThisTonic[i];
 
         if (diatonicValueAtIntervalDegree != intervalValue)
         {

@@ -3,7 +3,7 @@
 public class RawRegExStrings
 {
     public const string IntervalSymbol
-        = $@"(?<{Keywords.IntervalSymbol}>(#+|b+)?((?:1[43210]|[0-9])|VII|vii|VI|vi|v|V|iv|IV|iii|III|II|ii|i|I))";
+        = $@"(?<{Keywords.IntervalSymbol}>(#+|b+)?(12[0-7]|1[01][0-9]|[1-9][0-9]?))";
     public const string NoteName 
         = $@"(?<{Keywords.NoteName}>([A-G])(#+|b+)?)";
     public const string ChordRootName 

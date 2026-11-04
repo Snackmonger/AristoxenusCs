@@ -132,4 +132,6 @@ namespace Aristoxenus.Domain.Core.Tests
             Assert.AreEqual(expectedChordSymbol, chordSymbol);
         }
     }
+
+
 }
