@@ -53,9 +53,9 @@ public class ChordName(NoteName root, IntervalStructure intervals) : ValueObject
     public List<NoteName> GetNoteNames()
         => [.. Intervals.Select(Root.NoteNameAbove)];
 
-    public Chord Reify(ChordVoicing voicing, int octave)
+    public Chord Reify(ChordVoicing voicing, int inversion, int octave)
     {
-        return new(this, voicing, octave);
+        return new(this, voicing, inversion, octave);
     }
 
 

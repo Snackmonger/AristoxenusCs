@@ -157,6 +157,30 @@ public class IntervalStructure : ValueObject, IReadOnlySet<Interval>, ISymbolSer
         return CreateNew(scaleDegrees);
     }
 
+    /// <summary> 
+    /// Derive the interval structure of a chord from this interval structure, 
+    /// using the provided derivation configuration.
+    /// </summary>
+    public IntervalStructure Chordify(ChordScaleDerivation derivation)
+    {
+        List<Interval> parentIntervals = [.. Intervals.OrderBy(it => it.Value)];
+        List<Interval> intervals = [];
+        int step = (int)derivation.Structure -1;
+        for (int intervalNumber =0; intervals.Count < (int)derivation.NumberOfNotes; intervalNumber += step)
+        {
+            int octaves = 0;
+            int index = intervalNumber;
+            if (intervalNumber > parentIntervals.Count)
+            {
+                octaves = intervalNumber / parentIntervals.Count;
+                index =  intervalNumber % parentIntervals.Count;
+            }
+            Interval interval = parentIntervals[index];
+            intervals.Add(interval.Widen(octaves));
+        }
+        return new(intervals);
+    }
+
     /// <summary>
     /// Attempts to identify the scale represented by this interval structure.
     /// </summary>

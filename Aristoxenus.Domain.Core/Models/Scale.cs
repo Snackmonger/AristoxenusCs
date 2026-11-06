@@ -1,5 +1,4 @@
 ﻿using Aristoxenus.Domain.Core.Bases;
-using Aristoxenus.Domain.Core.Data;
 using Aristoxenus.Domain.Core.Utilities;
 
 namespace Aristoxenus.Domain.Core.Models;
@@ -20,33 +19,28 @@ public class Scale : ValueObject
     {
         Tonic = tonic;
         ScalePattern = scalePattern;
-        ModeNumber =
-            modeNumber > 0
-            && modeNumber <= ScalePattern.Count
-                ? modeNumber
-                : 1;
+        ModeNumber = modeNumber > 0 && modeNumber <= ScalePattern.Count ? modeNumber : 1;
         Intervals = IntervalStructure.CreateAsScale(PatternHelper.GetModeOfIntervalPattern(ScalePattern, ModeNumber));
-        Notes = [..Intervals.Select(Tonic.NoteNameAbove)];
-        
+        Notes = [.. Intervals.Select(Tonic.NoteNameAbove)];
+
     }
 
-    public IEnumerable<Chord> GetChordScale(ChordConfiguration config, int startInOctave)
+    public IEnumerable<Chord> GetChordScale(ChordScaleDerivation config, int startInOctave)
     {
         throw new NotImplementedException();
     }
 
     public List<Pitch> AscendingPitches(int startInOctave)
     {
-        throw new NotImplementedException();
+        Pitch tonic = new(Tonic, startInOctave);
+        return [.. Intervals.Select(tonic.GetPitchAbove)];
     }
 
-    public List<ChordName> GetChordScaleNames(ChordConfiguration config)
+    public List<ChordName> GetChordScaleNames(ChordScaleDerivation config)
     {
-        throw new NotImplementedException();
+throw new NotImplementedException();
     }
 
-    public List<ChordName> GetChordScaleNames(ChordStructure structure, ChordNumberOfNotes numberOfNotes)
-        => GetChordScaleNames(new(structure, numberOfNotes));
 
     protected override IEnumerable<object?> GetEqualityComponents()
     {
