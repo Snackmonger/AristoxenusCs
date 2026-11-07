@@ -53,7 +53,6 @@ public class IntervalStructure : ValueObject, IReadOnlySet<Interval>, ISymbolSer
     {
         List<Interval> sanitized = [];
 
-
         foreach (Interval interval in intervals)
         {
             if (sanitized.Contains(interval) || sanitized.Select(i => i.Value).Contains(interval.Value))
@@ -193,6 +192,9 @@ public class IntervalStructure : ValueObject, IReadOnlySet<Interval>, ISymbolSer
         return false;
     }
 
+    public List<Interval> Sorted
+        => [.. Intervals.OrderBy(it => it.Value)];
+
     public IEnumerable<Interval> Select(Func<Interval, bool> predicate)
         => Intervals.Where(predicate);
 
@@ -225,13 +227,6 @@ public class IntervalStructure : ValueObject, IReadOnlySet<Interval>, ISymbolSer
 
     public bool SetEquals(IEnumerable<Interval> intervals)
         => Intervals.SetEquals(intervals);
-
-    /// <summary>
-    /// Pretty print a list of the name symbol of the intervals in the 
-    /// structure.
-    /// </summary>
-    public string PrettyPrintSymbols()
-        => string.Join(", ", Intervals.Select(i => i.ToSymbol()));
 
 
     /// <summary>

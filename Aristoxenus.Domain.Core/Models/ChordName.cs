@@ -30,14 +30,17 @@ public class ChordName(NoteName root, IntervalStructure intervals) : ValueObject
     /// Flag that indicates whether the chord is diminished.
     /// </summary>
     public  bool IsDiminished => Intervals.IsDiminished;
+
     /// <summary>
     /// Flag that indicates whether the chord is dominant.
     /// </summary>
     public bool IsDominant => Intervals.IsDominant;
+
     /// <summary>
     /// Flag that indicates whether the chord has a perfect fifth.
     /// </summary>
     public bool HasPerfectFifth => Intervals.HasPerfectFifth;
+
     /// <summary>
     /// Flag that indicates whether the chord has an altered fifth.
     /// </summary>
@@ -49,17 +52,19 @@ public class ChordName(NoteName root, IntervalStructure intervals) : ValueObject
     /// NB: The note names do not distinguish octaves, so, e.g. 4 and 11 are 
     /// the same (but their position is determined by the interval structure).
     /// </summary>
-    /// <returns></returns>
     public List<NoteName> GetNoteNames()
         => [.. Intervals.Select(Root.NoteNameAbove)];
 
     public Chord Reify(ChordVoicing voicing, int inversion, int octave)
-    {
-        return new(this, voicing, inversion, octave);
-    }
+        => new(this, voicing, inversion, octave);
 
+    public Chord Reify(int inversion, int octave)
+    => new(this, ChordVoicing.RootPosition, inversion, octave);
 
-    public string ToSymbol()
+    public Chord Reify(int octave)
+    => new(this, ChordVoicing.RootPosition, 0, octave);
+
+    public string ToSymbol() 
         => Root.ToSymbol() + Intervals.ToChordSymbol();
 
     public static ChordName FromSymbol(string chordSymbol)
@@ -73,7 +78,7 @@ public class ChordName(NoteName root, IntervalStructure intervals) : ValueObject
         return new(NoteName.FromSymbol(root), IntervalStructure.FromChordSymbol(chordSymbol));
     }
 
-    string ISymbolSerializable<ChordName>.ToSymbol()
+    string ISymbolSerializable<ChordName>.ToSymbol() 
         => ToSymbol();
 
     static ChordName ISymbolSerializable<ChordName>.FromSymbol(string symbol)
@@ -85,7 +90,7 @@ public class ChordName(NoteName root, IntervalStructure intervals) : ValueObject
     }
 
     public static implicit operator string(ChordName chordName)
-    => chordName.ToSymbol();
+        => chordName.ToSymbol();
 
     public static implicit operator ChordName(string chordName)
         => FromSymbol(chordName);

@@ -1,4 +1,5 @@
 ﻿using Aristoxenus.Domain.Core.Bases;
+using Aristoxenus.Domain.Core.Data;
 
 namespace Aristoxenus.Domain.Core.Models
 {
@@ -34,22 +35,28 @@ namespace Aristoxenus.Domain.Core.Models
         public List<Pitch> AscendingArpeggio()
         {
             Pitch rootPitch = new(RootName, OctaveNumber);
-            List<Pitch> pitches = [..Name.Intervals.Select(rootPitch.GetPitchAbove)];
-            int i = Inversion;
-            while (i > 0)
+            List<Pitch> pitches = [..Name.Intervals.Sorted.Select(rootPitch.GetPitchAbove)];
+            int inversion = Inversion % pitches.Count;
+            while (inversion > 0)
             {
                 Pitch lowestPitch = pitches[0];
                 pitches.RemoveAt(0);
                 pitches.Add(lowestPitch.GetPitchAbove(Interval.Octave));
-                i--;
+                inversion--;
+            }
+
+            for (int i = 1; i < pitches.Count; i++)
+            {
+                Pitch previous = pitches[i - 1];
+                Pitch current = pitches[i];
+                if (current.Value <= previous.Value)
+                {
+                    pitches[i] = current.GetPitchAbove(Interval.Octave);
+                }
             }
 
             foreach (int displacedIndex in Voicing.DisplacedIntervalIndices)
             {
-                if (displacedIndex <= 0 || displacedIndex >= pitches.Count())
-                {
-                    throw new ArgumentOutOfRangeException($"Displaced interval index {displacedIndex} is out of range for the provided pitches.");
-                }
                 Pitch displacedPitch = pitches[displacedIndex];
                 pitches.RemoveAt(displacedIndex);
                 pitches.Add(displacedPitch.GetPitchAbove(Interval.Octave));

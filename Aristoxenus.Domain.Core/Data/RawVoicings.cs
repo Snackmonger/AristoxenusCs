@@ -10,6 +10,7 @@
         // the indices of notes that will be displaced *upwards*, which we do
         // because it makes it easier to find the right voicing for each inversion.
         // Invert, then apply the voicing. 
+        public static readonly int[] RootPosition = [];
         public static readonly int[] Drop2 = [1]; // 1357 -> 1573 : c e g b -> c g b e
         public static readonly int[] Drop2And4 = [1, 3]; // 1357 -> 1537 : c e g b -> c g e b
         public static readonly int[] Drop2And3 = [2]; // 1357 -> 1375 : c e g b -> c e b g
