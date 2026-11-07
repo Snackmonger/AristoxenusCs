@@ -53,7 +53,6 @@ public class IntervalStructure : ValueObject, IReadOnlySet<Interval>, ISymbolSer
     {
         List<Interval> sanitized = [];
 
-
         foreach (Interval interval in intervals)
         {
             if (sanitized.Contains(interval) || sanitized.Select(i => i.Value).Contains(interval.Value))
@@ -157,6 +156,30 @@ public class IntervalStructure : ValueObject, IReadOnlySet<Interval>, ISymbolSer
         return CreateNew(scaleDegrees);
     }
 
+    /// <summary> 
+    /// Derive the interval structure of a chord from this interval structure, 
+    /// using the provided derivation configuration.
+    /// </summary>
+    public IntervalStructure Chordify(ChordScaleDerivation derivation)
+    {
+        List<Interval> parentIntervals = [.. Intervals.OrderBy(it => it.Value)];
+        List<Interval> intervals = [];
+        int step = (int)derivation.Structure -1;
+        for (int intervalNumber =0; intervals.Count < (int)derivation.NumberOfNotes; intervalNumber += step)
+        {
+            int octaves = 0;
+            int index = intervalNumber;
+            if (intervalNumber > parentIntervals.Count)
+            {
+                octaves = intervalNumber / parentIntervals.Count;
+                index =  intervalNumber % parentIntervals.Count;
+            }
+            Interval interval = parentIntervals[index];
+            intervals.Add(interval.Widen(octaves));
+        }
+        return new(intervals);
+    }
+
     /// <summary>
     /// Attempts to identify the scale represented by this interval structure.
     /// </summary>
@@ -168,6 +191,9 @@ public class IntervalStructure : ValueObject, IReadOnlySet<Interval>, ISymbolSer
             return true;
         return false;
     }
+
+    public List<Interval> Sorted
+        => [.. Intervals.OrderBy(it => it.Value)];
 
     public IEnumerable<Interval> Select(Func<Interval, bool> predicate)
         => Intervals.Where(predicate);
@@ -201,13 +227,6 @@ public class IntervalStructure : ValueObject, IReadOnlySet<Interval>, ISymbolSer
 
     public bool SetEquals(IEnumerable<Interval> intervals)
         => Intervals.SetEquals(intervals);
-
-    /// <summary>
-    /// Pretty print a list of the name symbol of the intervals in the 
-    /// structure.
-    /// </summary>
-    public string PrettyPrintSymbols()
-        => string.Join(", ", Intervals.Select(i => i.ToSymbol()));
 
 
     /// <summary>

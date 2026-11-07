@@ -43,6 +43,8 @@ public class Interval(int degree, int accidental) : ValueObject, ISymbolSerializ
     /// </summary>
     public static Interval Unison => new(1, 0);
 
+    public static Interval Octave => new(8, 0);
+
 
     /// <summary>
     /// Create an interval that will have the given degree, plus as many

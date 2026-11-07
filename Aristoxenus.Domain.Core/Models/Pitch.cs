@@ -118,15 +118,21 @@ public class Pitch :  ValueObject, ISymbolSerializable<Pitch>
         return FromExpectedValue(noteName, value);
     }
 
+
     public static Pitch FromSymbol(string pitchSymbol)
     {
         ((int, int) noteName, int octave) = SymbolHelper.ParsePitchSymbol(pitchSymbol);
         return new(noteName, octave);
     }
 
-    public string ToSymbol() => SymbolHelper.CreatePitchSymbol(Name, Octave);
-    string ISymbolSerializable<Pitch>.ToSymbol() => ToSymbol();
-    static Pitch ISymbolSerializable<Pitch>.FromSymbol(string symbol) => FromSymbol(symbol);
+    public string ToSymbol() 
+        => SymbolHelper.CreatePitchSymbol(Name, Octave);
+
+    string ISymbolSerializable<Pitch>.ToSymbol() 
+
+        => ToSymbol();
+    static Pitch ISymbolSerializable<Pitch>.FromSymbol(string symbol) 
+        => FromSymbol(symbol);
 
     protected override IEnumerable<object?> GetEqualityComponents()
     {
@@ -134,11 +140,15 @@ public class Pitch :  ValueObject, ISymbolSerializable<Pitch>
         yield return Octave;
     }
 
-    public static implicit operator string(Pitch p) => p.ToSymbol();
+    public static implicit operator string(Pitch p) 
+        => p.ToSymbol();
 
-    public static implicit operator Pitch(string p) => FromSymbol(p);
+    public static implicit operator Pitch(string p) 
+        => FromSymbol(p);
 
-    public static implicit operator double(Pitch p) => p.Frequency;
+    public static implicit operator double(Pitch p) 
+        => p.Frequency;
 
-    public static implicit operator Pitch(double p) => FromFrequency(p);
+    public static implicit operator Pitch(double p) 
+        => FromFrequency(p);
 }

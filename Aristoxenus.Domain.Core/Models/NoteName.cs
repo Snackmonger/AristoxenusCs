@@ -156,6 +156,29 @@ public class NoteName(int pitchClass, int accidental) : ValueObject, ISymbolSeri
         yield return PitchClass;
         yield return Accidental;
     }
+
+    public static NoteName CFlat => new(0, -1);
+    public static NoteName C => new(0, 0);
+    public static NoteName CSharp => new(0, 1);
+    public static NoteName DFlat => new(1, -1);
+    public static NoteName D => new(1, 0);
+    public static NoteName DSharp => new(1, 1);
+    public static NoteName EFlat => new(2, -1);
+    public static NoteName E => new(2, 0);
+    public static NoteName ESharp => new(2, 1);
+    public static NoteName FFlat => new(3, -1);
+    public static NoteName F => new(3, 0);
+    public static NoteName FSharp => new(3, 1);
+    public static NoteName GFlat => new(4, -1);
+    public static NoteName G => new(4, 0);
+    public static NoteName GSharp => new(4, 1);
+    public static NoteName AFlat => new(5, -1);
+    public static NoteName A => new(5, 0);
+    public static NoteName ASharp => new(5, 1);
+    public static NoteName BFlat => new(6, -1);
+    public static NoteName B => new(6, 0);
+    public static NoteName BSharp => new(6, 1);
+
 }
 
 
