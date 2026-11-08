@@ -16,7 +16,7 @@ public class PitchPatternStrategy : IPitchPatternStrategy
     public List<Pitch> Execute(Pitch targetPitch)
     {
 
-        return [.._relativeIntervals.Select(it => it.Direction switch 
+        return [.._relativeIntervals.Select(it => it.Direction switch
         {
             RelativeDirection.Higher => targetPitch.GetPitchAbove(it.Interval),
             RelativeDirection.Lower => targetPitch.GetPitchBelow(it.Interval),

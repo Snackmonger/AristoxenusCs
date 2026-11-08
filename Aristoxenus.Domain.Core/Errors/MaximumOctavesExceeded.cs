@@ -1,5 +1,5 @@
-﻿using Aristoxenus.Domain.Core.Data;
-using Aristoxenus.Domain.Core.Bases;
+﻿using Aristoxenus.Domain.Core.Bases;
+using Aristoxenus.Domain.Core.Data;
 
 namespace Aristoxenus.Domain.Core.Errors
 {

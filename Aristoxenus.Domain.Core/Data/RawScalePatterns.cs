@@ -82,5 +82,5 @@ public class RawScalePatterns
             // Pentatonic Scales
             { nameof(MajorPentatonic), MajorPentatonic }
         };
-    
+
 }

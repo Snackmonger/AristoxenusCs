@@ -1,11 +1,12 @@
-﻿using Fractions;
-using Aristoxenus.Domain.Core.Bases;
+﻿using Aristoxenus.Domain.Core.Bases;
 using Aristoxenus.Domain.Core.Data;
+using Aristoxenus.Domain.Core.Interfaces;
+using Fractions;
 
 namespace Aristoxenus.Domain.Core.Models;
 
 
-public class Duration : ValueObject
+public class Duration : ValueObject, ISymbolSerializable<Duration>
 {
     public Fraction Value { get; init; }
     public Duration(Fraction value)
@@ -33,19 +34,31 @@ public class Duration : ValueObject
     public static Duration operator /(Duration left, int right)
         => new(left.Value / right);
 
-    public static bool operator >=(Duration left, Duration right)
-    {
-        return left.Value >= right.Value;
-    }
-    public static bool operator <=(Duration left, Duration right)
-    {
-        return left.Value <= right.Value;
-    }
+    
 
-    public override string ToString() => Value.ToString();
+    public static bool operator >=(Duration left, Duration right)
+        => left.Value >= right.Value;
+    
+    public static bool operator <=(Duration left, Duration right)
+        => left.Value <= right.Value;
+
+    public override string ToString() 
+        => Value.ToString();
 
     protected override IEnumerable<object?> GetEqualityComponents()
     {
         yield return Value;
     }
+
+    public string ToSymbol()
+        => Value.ToString();
+    
+
+    public static Duration FromSymbol(string symbol)
+        => new(Fraction.FromString(symbol));
+
+    public static implicit operator string(Duration duration) 
+        => duration.ToSymbol();
+    public static implicit operator Duration(string duration)
+        => FromSymbol(duration);
 }

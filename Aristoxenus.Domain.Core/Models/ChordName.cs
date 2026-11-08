@@ -1,9 +1,8 @@
-﻿using System.Text.RegularExpressions;
-
-using Aristoxenus.Domain.Core.Bases;
+﻿using Aristoxenus.Domain.Core.Bases;
 using Aristoxenus.Domain.Core.Data;
 using Aristoxenus.Domain.Core.Errors;
 using Aristoxenus.Domain.Core.Interfaces;
+using System.Text.RegularExpressions;
 
 namespace Aristoxenus.Domain.Core.Models;
 
@@ -29,7 +28,7 @@ public class ChordName(NoteName root, IntervalStructure intervals) : ValueObject
     /// <summary>
     /// Flag that indicates whether the chord is diminished.
     /// </summary>
-    public  bool IsDiminished => Intervals.IsDiminished;
+    public bool IsDiminished => Intervals.IsDiminished;
 
     /// <summary>
     /// Flag that indicates whether the chord is dominant.
@@ -64,7 +63,7 @@ public class ChordName(NoteName root, IntervalStructure intervals) : ValueObject
     public Chord Reify(int octave)
     => new(this, ChordVoicing.RootPosition, 0, octave);
 
-    public string ToSymbol() 
+    public string ToSymbol()
         => Root.ToSymbol() + Intervals.ToChordSymbol();
 
     public static ChordName FromSymbol(string chordSymbol)
@@ -78,7 +77,7 @@ public class ChordName(NoteName root, IntervalStructure intervals) : ValueObject
         return new(NoteName.FromSymbol(root), IntervalStructure.FromChordSymbol(chordSymbol));
     }
 
-    string ISymbolSerializable<ChordName>.ToSymbol() 
+    string ISymbolSerializable<ChordName>.ToSymbol()
         => ToSymbol();
 
     static ChordName ISymbolSerializable<ChordName>.FromSymbol(string symbol)

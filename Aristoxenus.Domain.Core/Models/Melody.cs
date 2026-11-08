@@ -1,5 +1,5 @@
-﻿using System.Collections;
-using Aristoxenus.Domain.Core.Interfaces;
+﻿using Aristoxenus.Domain.Core.Interfaces;
+using System.Collections;
 
 namespace Aristoxenus.Domain.Core.Models
 {

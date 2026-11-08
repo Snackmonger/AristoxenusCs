@@ -32,8 +32,8 @@ public static class FrequencyHelper
 
     public static int GetMidiNumberAtPitch((int PitchClass, int Accidental) noteName, int octaveNumber)
     {
-        int value = (RawScalePatterns.Diatonic[noteName.PitchClass % Numbers.NotesInOctave] + noteName.Accidental) 
-            % Numbers.SemitonesInOctave 
+        int value = (RawScalePatterns.Diatonic[noteName.PitchClass % Numbers.NotesInOctave] + noteName.Accidental)
+            % Numbers.SemitonesInOctave
             + (octaveNumber * Numbers.SemitonesInOctave);
         return value + Numbers.SemitonesInOctave;
 

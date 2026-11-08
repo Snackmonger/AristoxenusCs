@@ -38,7 +38,7 @@ public class Scale : ValueObject
 
     public List<ChordName> GetChordScaleNames(ChordScaleDerivation config)
     {
-throw new NotImplementedException();
+        throw new NotImplementedException();
     }
 
 
