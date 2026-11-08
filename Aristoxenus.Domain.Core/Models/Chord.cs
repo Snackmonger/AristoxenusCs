@@ -1,5 +1,4 @@
 ﻿using Aristoxenus.Domain.Core.Bases;
-using Aristoxenus.Domain.Core.Data;
 
 namespace Aristoxenus.Domain.Core.Models
 {
@@ -32,10 +31,12 @@ namespace Aristoxenus.Domain.Core.Models
         public NoteName RootName => Name.Root;
 
 
-        public List<Pitch> AscendingArpeggio()
+        public List<Pitch> AscendingArpeggio 
+        {
+            get
         {
             Pitch rootPitch = new(RootName, OctaveNumber);
-            List<Pitch> pitches = [..Name.Intervals.Sorted.Select(rootPitch.GetPitchAbove)];
+            List<Pitch> pitches = [.. Name.Intervals.Sorted.Select(rootPitch.GetPitchAbove)];
             int inversion = Inversion % pitches.Count;
             while (inversion > 0)
             {
@@ -64,14 +65,15 @@ namespace Aristoxenus.Domain.Core.Models
 
             return pitches;
         }
+        }
 
 
-        public Chord InVoicing(ChordVoicing voicing)
+        public Chord WithVoicing(ChordVoicing voicing)
         {
             return new Chord(Name, voicing, Inversion, OctaveNumber);
         }
 
-        public Chord InInversion(int inversion)
+        public Chord WithInversion(int inversion)
         {
             return new Chord(Name, Voicing, inversion, OctaveNumber);
         }
@@ -79,7 +81,7 @@ namespace Aristoxenus.Domain.Core.Models
         public Chord InOctave(int octave)
         {
             return new Chord(Name, Voicing, Inversion, octave);
-        }   
+        }
 
 
         protected override IEnumerable<object?> GetEqualityComponents()

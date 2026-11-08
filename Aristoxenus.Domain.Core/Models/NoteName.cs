@@ -1,7 +1,7 @@
 ﻿using Aristoxenus.Domain.Core.Bases;
 using Aristoxenus.Domain.Core.Data;
-using Aristoxenus.Domain.Core.Utilities;
 using Aristoxenus.Domain.Core.Interfaces;
+using Aristoxenus.Domain.Core.Utilities;
 
 
 namespace Aristoxenus.Domain.Core.Models;
@@ -34,7 +34,7 @@ public class NoteName(int pitchClass, int accidental) : ValueObject, ISymbolSeri
     /// twelve-tone octave, such that C=0, C#=1, Db=1, ..., B=11, B#=0, 
     /// and Cb=11.
     /// </summary>
-    public int AbsoluteValue 
+    public int AbsoluteValue
         => (RawScalePatterns.Diatonic[PitchClass] + Numbers.SemitonesInOctave + Accidental) % Numbers.SemitonesInOctave;
 
     /// <summary>
@@ -43,14 +43,14 @@ public class NoteName(int pitchClass, int accidental) : ValueObject, ISymbolSeri
     /// started, e.g. A#### will be simplified to C#, and Fbbbb will be 
     /// simplified to Db.
     /// </summary>
-    public NoteName SimplifiedName 
+    public NoteName SimplifiedName
         => NomenclatureHelper.GetSimplifiedName(PitchClass, Accidental);
 
     /// <summary>
     /// For any note for which two names exist, return the other note name with
     /// the same relative value (e.g. Bb > A#, Db > C#, C > B#, Cb > B, etc.).
     /// </summary>
-    public NoteName FlipBinomial() 
+    public NoteName FlipBinomial()
         => NomenclatureHelper.FlipBinomial(PitchClass, Accidental);
 
     /// <summary>
@@ -71,39 +71,39 @@ public class NoteName(int pitchClass, int accidental) : ValueObject, ISymbolSeri
     /// Calculate the note name that lies at the specified interval above 
     /// the given note name.
     /// </summary>
-    public NoteName NoteNameAbove(Interval interval) 
+    public NoteName NoteNameAbove(Interval interval)
         => NomenclatureHelper.GetNoteNameAbove(this, interval);
 
     /// <summary>
     /// Calculate the note name that lies at the specified interval
     /// above the given note name.
     /// </summary>
-    public NoteName NoteNameAbove(string interval) 
+    public NoteName NoteNameAbove(string interval)
         => NoteNameAbove(Interval.FromSymbol(interval));
 
     /// <summary>
     /// Calculate the interval that exists between this note name and a 
     /// higher note name (e.g. Lower C to higher G is a perfect fifth,
     /// but a lower G to a higher C is a perfect fourth).
-    public Interval IntervalAbove(NoteName highNote) 
+    public Interval IntervalAbove(NoteName highNote)
         => NomenclatureHelper.GetIntervalNameBetweenNoteNames(this, highNote);
 
     /// <summary>
     /// Calculate the interval that exists between this 
     /// note name and a higher note name.
-    public Interval IntervalAbove(string highNote) 
+    public Interval IntervalAbove(string highNote)
         => IntervalAbove(FromSymbol(highNote));
 
     /// <summary>
     /// Calculate the interval that exists between this 
     /// note name and a lower note name.
-    public Interval IntervalBelow(NoteName lowNote) 
+    public Interval IntervalBelow(NoteName lowNote)
         => lowNote.IntervalAbove(this);
 
     /// <summary>
     /// Calculate the interval that exists between this 
     /// note name and a lower note name.
-    public Interval IntervalBelow(string lowNote) 
+    public Interval IntervalBelow(string lowNote)
         => IntervalBelow(FromSymbol(lowNote));
 
     /// <summary>
@@ -115,19 +115,19 @@ public class NoteName(int pitchClass, int accidental) : ValueObject, ISymbolSeri
     public bool IsEnharmonicallyEquivalent(NoteName other)
         => AbsoluteValue == other.AbsoluteValue;
 
-    string ISymbolSerializable<NoteName>.ToSymbol() 
+    string ISymbolSerializable<NoteName>.ToSymbol()
         => SymbolHelper.CreateNoteNameSymbol((PitchClass, Accidental));
 
-    static NoteName ISymbolSerializable<NoteName>.FromSymbol(string noteNameSymbol) 
+    static NoteName ISymbolSerializable<NoteName>.FromSymbol(string noteNameSymbol)
         => SymbolHelper.ParseNoteNameSymbol(noteNameSymbol);
 
-    public string ToSymbol() 
+    public string ToSymbol()
         => SymbolHelper.CreateNoteNameSymbol(this);
 
     public static string ToSymbol(NoteName noteName)
         => SymbolHelper.CreateNoteNameSymbol(noteName);
 
-    public static NoteName FromSymbol(string noteNameSymbol) 
+    public static NoteName FromSymbol(string noteNameSymbol)
         => SymbolHelper.ParseNoteNameSymbol(noteNameSymbol);
 
     public static string PrettyPrintSymbols(IEnumerable<NoteName> noteNames)
@@ -136,19 +136,19 @@ public class NoteName(int pitchClass, int accidental) : ValueObject, ISymbolSeri
     public static IEnumerable<NoteName> FromSymbols(IEnumerable<string> noteNameSymbols)
         => noteNameSymbols.Select(FromSymbol);
 
-    public static implicit operator string(NoteName noteName) 
+    public static implicit operator string(NoteName noteName)
         => noteName.ToSymbol();
 
-    public static implicit operator NoteName(string noteNameSymbol) 
+    public static implicit operator NoteName(string noteNameSymbol)
         => SymbolHelper.ParseNoteNameSymbol(noteNameSymbol);
 
-    public static implicit operator (int pitchClass, int accidental)(NoteName noteName) 
+    public static implicit operator (int pitchClass, int accidental)(NoteName noteName)
         => (noteName.PitchClass, noteName.Accidental);
 
-    public static implicit operator NoteName((int pitchClass, int accidental) noteNameRawValues) 
+    public static implicit operator NoteName((int pitchClass, int accidental) noteNameRawValues)
         => new(noteNameRawValues.pitchClass, noteNameRawValues.accidental);
 
-    public void Deconstruct(out int pitchClass, out int accidental) 
+    public void Deconstruct(out int pitchClass, out int accidental)
         => (pitchClass, accidental) = (PitchClass, Accidental);
 
     protected override IEnumerable<object?> GetEqualityComponents()

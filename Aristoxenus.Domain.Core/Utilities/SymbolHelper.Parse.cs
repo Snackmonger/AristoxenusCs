@@ -1,9 +1,7 @@
-﻿using System.Text.RegularExpressions;
-
-using Libraries.RomanNumerals;
-
-using Aristoxenus.Domain.Core.Data;
+﻿using Aristoxenus.Domain.Core.Data;
 using Aristoxenus.Domain.Core.Errors;
+using Libraries.RomanNumerals;
+using System.Text.RegularExpressions;
 
 namespace Aristoxenus.Domain.Core.Utilities;
 

@@ -1,7 +1,6 @@
-﻿using System.Text.RegularExpressions;
-
-using Aristoxenus.Domain.Core.Data;
+﻿using Aristoxenus.Domain.Core.Data;
 using Aristoxenus.Domain.Core.Errors;
+using System.Text.RegularExpressions;
 
 namespace Aristoxenus.Domain.Core.Utilities;
 
@@ -476,8 +475,8 @@ public static partial class SymbolHelper
             List<(int, int)> checkedExtensions = [];
             foreach (((int degree, int) extension, int index) in NaturalExtensions.Select((e, i) => (e, i)))
             {
-                (int, int)? prev = index > Numbers.Zero 
-                    ? NaturalExtensions[index - Numbers.IndexOffset] 
+                (int, int)? prev = index > Numbers.Zero
+                    ? NaturalExtensions[index - Numbers.IndexOffset]
                     : null;
                 if (remaining.Contains(extension))
                 {

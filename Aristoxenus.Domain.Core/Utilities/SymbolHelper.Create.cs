@@ -1,6 +1,5 @@
-﻿using Libraries.Arithmology;
-
-using Aristoxenus.Domain.Core.Data;
+﻿using Aristoxenus.Domain.Core.Data;
+using Libraries.Arithmology;
 
 namespace Aristoxenus.Domain.Core.Utilities;
 

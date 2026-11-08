@@ -1,11 +1,10 @@
-﻿using Libraries.Arithmology;
-using Aristoxenus.Domain.Core.Data;
+﻿using Aristoxenus.Domain.Core.Data;
 using Aristoxenus.Domain.Core.Errors;
 
 namespace Aristoxenus.Domain.Core.Utilities;
 
-using NoteName = (int PitchClass, int Accidental);
 using DegreeName = (int Degree, int Accidental);
+using NoteName = (int PitchClass, int Accidental);
 
 public static class NomenclatureHelper
 {
@@ -47,7 +46,7 @@ public static class NomenclatureHelper
     /// </summary>
     public static int GetIntervalValueFromDegreeName(DegreeName intervalName)
     {
-        int naturalValue; 
+        int naturalValue;
         int scalingFactor = 0;
         if (intervalName.Degree > Numbers.NotesInOctave)
         {

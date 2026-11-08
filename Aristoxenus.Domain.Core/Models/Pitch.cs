@@ -1,8 +1,8 @@
 ﻿using Aristoxenus.Domain.Core.Bases;
 using Aristoxenus.Domain.Core.Data;
 using Aristoxenus.Domain.Core.Errors;
-using Aristoxenus.Domain.Core.Utilities;
 using Aristoxenus.Domain.Core.Interfaces;
+using Aristoxenus.Domain.Core.Utilities;
 
 namespace Aristoxenus.Domain.Core.Models;
 
@@ -10,7 +10,7 @@ namespace Aristoxenus.Domain.Core.Models;
 /// Representation of a NoteName in the concrete tonal space of a range of
 /// octaves.
 /// </summary>
-public class Pitch :  ValueObject, ISymbolSerializable<Pitch>
+public class Pitch : ValueObject, ISymbolSerializable<Pitch>
 {
 
     public NoteName Name;
@@ -87,7 +87,7 @@ public class Pitch :  ValueObject, ISymbolSerializable<Pitch>
     /// pitch, expressed in its simplest form, using sharps or flats according
     /// to the flag <paramref name="useSharps"/>.
     /// </summary>
-    public Pitch GetPitchBelow(int semitones, bool useSharps = true) 
+    public Pitch GetPitchBelow(int semitones, bool useSharps = true)
         => FromMidiNumber(MidiNumber - semitones, useSharps);
 
     /// <summary>
@@ -95,7 +95,7 @@ public class Pitch :  ValueObject, ISymbolSerializable<Pitch>
     /// pitch, expressed in its simplest form, using sharps or flats according
     /// to the flag <paramref name="useSharps"/>.
     /// </summary>
-    public Pitch GetPitchAbove(int semitones, bool useSharps = true) 
+    public Pitch GetPitchAbove(int semitones, bool useSharps = true)
         => FromMidiNumber(MidiNumber + semitones, useSharps);
 
     /// <summary>
@@ -125,13 +125,13 @@ public class Pitch :  ValueObject, ISymbolSerializable<Pitch>
         return new(noteName, octave);
     }
 
-    public string ToSymbol() 
+    public string ToSymbol()
         => SymbolHelper.CreatePitchSymbol(Name, Octave);
 
-    string ISymbolSerializable<Pitch>.ToSymbol() 
+    string ISymbolSerializable<Pitch>.ToSymbol()
 
         => ToSymbol();
-    static Pitch ISymbolSerializable<Pitch>.FromSymbol(string symbol) 
+    static Pitch ISymbolSerializable<Pitch>.FromSymbol(string symbol)
         => FromSymbol(symbol);
 
     protected override IEnumerable<object?> GetEqualityComponents()
@@ -140,15 +140,15 @@ public class Pitch :  ValueObject, ISymbolSerializable<Pitch>
         yield return Octave;
     }
 
-    public static implicit operator string(Pitch p) 
+    public static implicit operator string(Pitch p)
         => p.ToSymbol();
 
-    public static implicit operator Pitch(string p) 
+    public static implicit operator Pitch(string p)
         => FromSymbol(p);
 
-    public static implicit operator double(Pitch p) 
+    public static implicit operator double(Pitch p)
         => p.Frequency;
 
-    public static implicit operator Pitch(double p) 
+    public static implicit operator Pitch(double p)
         => FromFrequency(p);
 }

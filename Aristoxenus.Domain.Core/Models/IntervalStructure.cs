@@ -1,11 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Immutable;
-
-using Aristoxenus.Domain.Core.Bases;
+﻿using Aristoxenus.Domain.Core.Bases;
 using Aristoxenus.Domain.Core.Data;
 using Aristoxenus.Domain.Core.Errors;
 using Aristoxenus.Domain.Core.Interfaces;
 using Aristoxenus.Domain.Core.Utilities;
+using System.Collections;
+using System.Collections.Immutable;
 
 namespace Aristoxenus.Domain.Core.Models;
 
@@ -46,7 +45,7 @@ public class IntervalStructure : ValueObject, IReadOnlySet<Interval>, ISymbolSer
         }
     }
 
-    public IntervalStructure ReciprocalStructure 
+    public IntervalStructure ReciprocalStructure
         => new(Intervals.Select(it => it.Reciprocal));
 
     public IntervalStructure(IEnumerable<Interval> intervals)
@@ -164,15 +163,15 @@ public class IntervalStructure : ValueObject, IReadOnlySet<Interval>, ISymbolSer
     {
         List<Interval> parentIntervals = [.. Intervals.OrderBy(it => it.Value)];
         List<Interval> intervals = [];
-        int step = (int)derivation.Structure -1;
-        for (int intervalNumber =0; intervals.Count < (int)derivation.NumberOfNotes; intervalNumber += step)
+        int step = (int)derivation.Structure - 1;
+        for (int intervalNumber = 0; intervals.Count < (int)derivation.NumberOfNotes; intervalNumber += step)
         {
             int octaves = 0;
             int index = intervalNumber;
             if (intervalNumber > parentIntervals.Count)
             {
                 octaves = intervalNumber / parentIntervals.Count;
-                index =  intervalNumber % parentIntervals.Count;
+                index = intervalNumber % parentIntervals.Count;
             }
             Interval interval = parentIntervals[index];
             intervals.Add(interval.Widen(octaves));

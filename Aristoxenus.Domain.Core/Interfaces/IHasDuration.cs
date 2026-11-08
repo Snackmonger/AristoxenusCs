@@ -2,7 +2,7 @@
 
 namespace Aristoxenus.Domain.Core.Interfaces;
 
-public interface IHasDuration 
+public interface IHasDuration
 {
     public Duration Duration { get; }
 

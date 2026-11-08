@@ -18,7 +18,7 @@ namespace Aristoxenus.Domain.Core.Utilities
          * WARNING: A degree of 0 is assumed to be an off-by-one error and 
          * will be normalized to 1.
          */
-        public static int NormalizeDegree(int degree) => degree == 0 ? 1: Math.Abs(degree);
+        public static int NormalizeDegree(int degree) => degree == 0 ? 1 : Math.Abs(degree);
 
         /**
          * Normalize a pitch class. A pitch class needs to be a non-negative 
