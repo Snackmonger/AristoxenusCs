@@ -1,5 +1,6 @@
 ﻿
 
+using Aristoxenus.Domain.Core.Enums;
 using Aristoxenus.Domain.Core.Interfaces;
 using Aristoxenus.Domain.Core.Models;
 
@@ -13,7 +14,7 @@ public class DslDemo
 
         melody.WithDefaultDuration(Duration.Quarter);
         var config = new ChordScaleDerivation(ChordStructure.Tertial, ChordNumberOfNotes.Tetrad);
-        
+
         var chordScale = scale.GetChords(config, startInOctave: 4);
         bool even = false;
 

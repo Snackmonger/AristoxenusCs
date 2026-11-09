@@ -9,13 +9,13 @@ namespace Aristoxenus.Presentation.CommandLine.SpectreBridge;
 
 public sealed class TypeRegistrar(IServiceCollection builder) : ITypeRegistrar
 {
-    public void Register(Type service, Type implementation) 
+    public void Register(Type service, Type implementation)
         => builder.AddSingleton(service, implementation);
-    public void RegisterInstance(Type service, object implementation) 
+    public void RegisterInstance(Type service, object implementation)
         => builder.AddSingleton(service, implementation);
-    public void RegisterLazy(Type service, Func<object> factory) 
+    public void RegisterLazy(Type service, Func<object> factory)
         => builder.AddSingleton(service, _ => factory());
 
-    public ITypeResolver Build() 
+    public ITypeResolver Build()
         => new TypeResolver(builder.BuildServiceProvider());
 }

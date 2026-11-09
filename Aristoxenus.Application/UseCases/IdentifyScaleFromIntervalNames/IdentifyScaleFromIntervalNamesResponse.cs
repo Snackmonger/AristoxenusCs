@@ -1,4 +1,6 @@
-﻿namespace Aristoxenus.Application.UseCases.IdentifyScaleFromIntervalNames
+﻿using Aristoxenus.Domain.Core.Enums;
+
+namespace Aristoxenus.Application.UseCases.IdentifyScaleFromIntervalNames
 {
-    public record IdentifyScaleFromIntervalNamesResponse(IEnumerable<string> RequestedIntervals, string ScaleName, int Mode);
+    public record IdentifyScaleFromIntervalNamesResponse(IEnumerable<string> RequestedIntervals, ScaleName ScaleName, int Mode);
 }

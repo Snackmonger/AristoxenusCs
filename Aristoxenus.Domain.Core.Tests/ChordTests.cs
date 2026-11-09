@@ -1,7 +1,4 @@
-﻿
-
-using Aristoxenus.Domain.Core.Data;
-using Aristoxenus.Domain.Core.Models;
+﻿using Aristoxenus.Domain.Core.Models;
 
 namespace Aristoxenus.Domain.Core.Tests
 {
@@ -34,11 +31,11 @@ namespace Aristoxenus.Domain.Core.Tests
 
         public void AscendingArpeggio_Tertial_CloseVoicing_Octave4_ReturnsCorrectPitches(string[] expectedPitches, string chordSymbol, int inversion)
         {
-            
+
             var chord = ChordName.FromSymbol(chordSymbol).Reify(inversion, 4);
-            
+
             var arpeggio = chord.AscendingArpeggio;
-            List<Pitch> pitches = [..expectedPitches.Select(Pitch.FromSymbol)];
+            List<Pitch> pitches = [.. expectedPitches.Select(Pitch.FromSymbol)];
             CollectionAssert.AreEqual(pitches, arpeggio);
         }
     }

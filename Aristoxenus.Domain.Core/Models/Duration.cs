@@ -34,15 +34,15 @@ public class Duration : ValueObject, ISymbolSerializable<Duration>
     public static Duration operator /(Duration left, int right)
         => new(left.Value / right);
 
-    
+
 
     public static bool operator >=(Duration left, Duration right)
         => left.Value >= right.Value;
-    
+
     public static bool operator <=(Duration left, Duration right)
         => left.Value <= right.Value;
 
-    public override string ToString() 
+    public override string ToString()
         => Value.ToString();
 
     protected override IEnumerable<object?> GetEqualityComponents()
@@ -52,12 +52,12 @@ public class Duration : ValueObject, ISymbolSerializable<Duration>
 
     public string ToSymbol()
         => Value.ToString();
-    
+
 
     public static Duration FromSymbol(string symbol)
         => new(Fraction.FromString(symbol));
 
-    public static implicit operator string(Duration duration) 
+    public static implicit operator string(Duration duration)
         => duration.ToSymbol();
     public static implicit operator Duration(string duration)
         => FromSymbol(duration);

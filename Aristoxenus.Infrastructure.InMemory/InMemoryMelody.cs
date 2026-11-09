@@ -1,7 +1,9 @@
-﻿using Aristoxenus.Domain.Core.Interfaces;
-using System.Collections;
+﻿using System.Collections;
 
-namespace Aristoxenus.Domain.Core.Models
+using Aristoxenus.Domain.Core.Interfaces;
+using Aristoxenus.Domain.Core.Models;
+
+namespace Aristoxenus.Infrastructure.InMemory
 {
     public class InMemoryMelody() : IMelody
     {

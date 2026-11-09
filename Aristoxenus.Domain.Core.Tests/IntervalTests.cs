@@ -50,7 +50,7 @@ namespace Aristoxenus.Domain.Core.Tests
         public void Widen_LegalInterval_By_LegalNumberOfOctaves_ReturnsCorrectInterval(string expectedInterval, int octaves, string interval)
         {
             Interval i = Interval.FromSymbol(interval);
-            
+
             Interval widened = i.Widen(octaves);
 
             Assert.AreEqual(expectedInterval, widened.ToSymbol());

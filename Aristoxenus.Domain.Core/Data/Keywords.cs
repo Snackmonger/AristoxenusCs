@@ -42,6 +42,16 @@
         public const string Hungarian = "hungarian";
         public const string Persian = "persian";
         public const string Romanian = "romanian";
+        public const string Major6Diminished = "major_6_diminished";
+        public const string Minor6Diminished = "minor_6_diminished";
+        public const string Dominant7Diminished = "dominant_7_diminished";
+        public const string Dominant7b5Diminished = "dominant_7_b5_diminished";
+        public const string SymmetricalDiminished = "symmetrical_diminished";
+        public const string WholeTone = "whole_tone";
+        public const string SymmetricalAugmented = "symmetrical_augmented";
+        public const string MajorHexatonic = "major_hexatonic";
+        public const string Prometheus = "prometheus";
+        public const string MajorPentatonic = "major_pentatonic";
 
     }
 }

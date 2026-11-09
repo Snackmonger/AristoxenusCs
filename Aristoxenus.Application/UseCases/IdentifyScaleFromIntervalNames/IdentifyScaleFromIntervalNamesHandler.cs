@@ -3,6 +3,7 @@
 using MediatR;
 using Aristoxenus.Domain.Core.Errors;
 using Aristoxenus.Domain.Core.Models;
+using Aristoxenus.Domain.Core.Enums;
 
 namespace Aristoxenus.Application.UseCases.IdentifyScaleFromIntervalNames;
 
@@ -15,24 +16,20 @@ public class IdentifyScaleFromIntervalNamesHandler : IRequestHandler<IdentifySca
         {
             if (IntervalStructure
                     .FromScaleDegreeSymbols(request.IntervalNameSymbols)
-                    .CanIdentifyScale(out string? name, out int? mode)
+                    .CanIdentifyScale(out ScaleName? name, out int? mode)
             )
-                response = Result.Ok(new IdentifyScaleFromIntervalNamesResponse(request.IntervalNameSymbols, name!, (int)mode!));
+                response = Result.Ok(new IdentifyScaleFromIntervalNamesResponse(request.IntervalNameSymbols, (ScaleName)name!, (int)mode!));
 
             else
                 response = Result.Fail($"Unable to identify scale.");
         }
-        catch (InvalidAsSymbol ex)
-        {
-            response = Result.Fail(ex.Message);
-        }
-        catch (IntervalStructureHasDuplicates ex)
+        catch (Exception ex) when (ex is InvalidAsSymbol or IntervalStructureHasDuplicates)
         {
             response = Result.Fail(ex.Message);
         }
         catch (Exception ex)
         {
-            response = Result.Fail($"[WARNING][{DateTime.UtcNow}]: An unknown exception occurred: {ex.Message}");
+            response = Result.Fail($"An unknown exception occurred: {ex.Message}");
         }
         return response;
     }

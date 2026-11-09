@@ -2,7 +2,7 @@
   "profiles": {
     "Aristoxenus.CommandLine": {
       "commandName": "Project",
-      "commandLineArgs": "debug"
+      "commandLineArgs": "scale.chords"
     }
   }
 }

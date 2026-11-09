@@ -1,5 +1,6 @@
 ﻿using Aristoxenus.Domain.Core.Bases;
 using Aristoxenus.Domain.Core.Data;
+using Aristoxenus.Domain.Core.Enums;
 using Aristoxenus.Domain.Core.Errors;
 using Aristoxenus.Domain.Core.Interfaces;
 using Aristoxenus.Domain.Core.Utilities;
@@ -188,7 +189,7 @@ public class IntervalStructure : ValueObject, IReadOnlySet<Interval>, ISymbolSer
     /// <summary>
     /// Attempts to identify the scale represented by this interval structure.
     /// </summary>
-    public bool CanIdentifyScale(out string? name, out int? mode)
+    public bool CanIdentifyScale(out ScaleName? name, out int? mode)
     {
         name = default;
         mode = default;

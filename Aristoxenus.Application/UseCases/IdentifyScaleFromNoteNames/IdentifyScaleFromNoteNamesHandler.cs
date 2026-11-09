@@ -4,6 +4,7 @@ using MediatR;
 
 using Aristoxenus.Domain.Core.Errors;
 using Aristoxenus.Domain.Core.Models;
+using Aristoxenus.Domain.Core.Enums;
 
 namespace Aristoxenus.Application.UseCases.IdentifyScaleFromNoteNames;
 
@@ -18,24 +19,19 @@ public class IdentifyScaleFromNoteNamesHandler : IRequestHandler<IdentifyScaleFr
             List<NoteName> noteNames = [.. NoteName.FromSymbols(request.NoteNameSymbols)];
             var root = noteNames[0];
             IntervalStructure intervals = new([.. noteNames.Select(root.IntervalAbove)]);
-            if (intervals.CanIdentifyScale(out string? name, out int? mode))
-                response = Result.Ok(new IdentifyScaleFromNoteNamesResponse(request.NoteNameSymbols, name!, (int)mode!));
+            if (intervals.CanIdentifyScale(out ScaleName? name, out int? mode))
+                response = Result.Ok(new IdentifyScaleFromNoteNamesResponse(request.NoteNameSymbols, (ScaleName)name!, (int)mode!));
 
             else
                 response = Result.Fail($"Unable to identify scale.");
         }
-        catch (InvalidAsSymbol ex)
-        {
-            response = Result.Fail(ex.Message);
-        }
-        catch (IntervalStructureHasDuplicates ex)
+        catch (Exception ex) when (ex is InvalidAsSymbol or IntervalStructureHasDuplicates)
         {
             response = Result.Fail(ex.Message);
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[WARN][{DateTime.UtcNow}] An unknown exception occurred: {ex.Message}");
-            response = Result.Fail("Request failed");
+            response = Result.Fail($"An unknown exception occurred: {ex.Message}");
         }
         return response;
     }

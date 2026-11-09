@@ -1,5 +1,6 @@
 ﻿using Aristoxenus.Domain.Core.Bases;
 using Aristoxenus.Domain.Core.Data;
+using Aristoxenus.Domain.Core.Enums;
 
 namespace Aristoxenus.Domain.Core.Models;
 
@@ -49,8 +50,8 @@ public class PitchPatternStep(PitchPatternStepType type, int offset) : ValueObje
             int degree;
             int value = Offset;
             int adjustedValue = value % Numbers.SemitonesInDoubleOctave;
-            int[] diatonic = RawScalePatterns.GetDoubleOctaveOfPattern(Keywords.Diatonic);
-            int[] altered = RawScalePatterns.GetDoubleOctaveOfPattern(Keywords.Altered);
+            int[] diatonic = RawScalePatterns.GetDoubleOctaveOfPattern(ScaleName.Diatonic);
+            int[] altered = RawScalePatterns.GetDoubleOctaveOfPattern(ScaleName.Altered);
 
             if (scale.Intervals.Select(it => it.Value).Contains(value))
             {

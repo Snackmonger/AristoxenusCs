@@ -1,4 +1,6 @@
-﻿namespace Aristoxenus.Application.UseCases.IdentifyScaleFromNoteNames
+﻿using Aristoxenus.Domain.Core.Enums;
+
+namespace Aristoxenus.Application.UseCases.IdentifyScaleFromNoteNames
 {
-    public record IdentifyScaleFromNoteNamesResponse(IEnumerable<string> RequestedNotes, string ScaleName, int Mode);
+    public record IdentifyScaleFromNoteNamesResponse(IEnumerable<string> RequestedNotes, ScaleName ScaleName, int Mode);
 }

@@ -1,12 +1,9 @@
-﻿using System.ComponentModel;
-
+﻿using Aristoxenus.Application.UseCases.IdentifyScaleFromIntervalNames;
+using Aristoxenus.Application.UseCases.IdentifyScaleFromNoteNames;
 using MediatR;
-
 using Spectre.Console;
 using Spectre.Console.Cli;
-
-using Aristoxenus.Application.UseCases.IdentifyScaleFromIntervalNames;
-using Aristoxenus.Application.UseCases.IdentifyScaleFromNoteNames;
+using System.ComponentModel;
 
 namespace Aristoxenus.Presentation.CommandLine.SpectreCommands;
 
@@ -31,7 +28,7 @@ public class IdentifyScaleCommand(IMediator mediator) : AsyncCommand<IdentifySca
             exitCode = 0;
         }
         else
-        { 
+        {
             var intervalNamesRequest = new IdentifyScaleFromIntervalNamesRequest(settings.Symbols);
             var intervalNamesResponse = await mediator.Send(intervalNamesRequest, cancellationToken);
             if (intervalNamesResponse.IsSuccess)

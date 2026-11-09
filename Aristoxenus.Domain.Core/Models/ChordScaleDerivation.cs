@@ -1,4 +1,6 @@
-﻿namespace Aristoxenus.Domain.Core.Models;
+﻿using Aristoxenus.Domain.Core.Enums;
+
+namespace Aristoxenus.Domain.Core.Models;
 
 public record ChordScaleDerivation
 {

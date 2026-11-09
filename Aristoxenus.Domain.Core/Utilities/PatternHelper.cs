@@ -1,4 +1,5 @@
 ﻿using Aristoxenus.Domain.Core.Data;
+using Aristoxenus.Domain.Core.Enums;
 
 namespace Aristoxenus.Domain.Core.Utilities;
 
@@ -75,7 +76,7 @@ public static class PatternHelper
     /// a known scale, and if so, write its name and mode to the out 
     /// parameters.
     /// </summary>
-    public static bool TryIdentifyScale(IEnumerable<int> pattern, out string? name, out int? mode)
+    public static bool TryIdentifyScale(IEnumerable<int> pattern, out ScaleName? name, out int? mode)
     {
         name = default;
         mode = default;

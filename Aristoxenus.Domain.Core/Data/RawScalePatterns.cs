@@ -1,4 +1,6 @@
-﻿namespace Aristoxenus.Domain.Core.Data;
+﻿using Aristoxenus.Domain.Core.Enums;
+
+namespace Aristoxenus.Domain.Core.Data;
 
 
 /// <summary>
@@ -40,47 +42,48 @@ public class RawScalePatterns
     // Pentatonic Scales
     public static readonly int[] MajorPentatonic = [0, 2, 4, 7, 9];
 
-    public static int[] GetScalePattern(string scaleName)
+    public static int[] GetScalePattern(ScaleName scaleName)
         => [.. _allScales[scaleName]];
-    public static int[] GetDoubleOctaveOfPattern(string scaleName)
+
+    public static int[] GetDoubleOctaveOfPattern(ScaleName scaleName)
         => [.. _allScales[scaleName], .. _allScales[scaleName].Select(it => it + Numbers.SemitonesInOctave)];
-    public static IReadOnlyDictionary<string, int[]> AllScales
+    public static IReadOnlyDictionary<ScaleName, int[]> AllScales
         => _allScales.AsReadOnly();
-    private static Dictionary<string, int[]> _allScales
+    private static Dictionary<ScaleName, int[]> _allScales
         => new()
         {
             // Heptaonic Scales
-            { nameof(Diatonic), Diatonic },
-            { nameof(Altered), Altered },
-            { nameof(Hemitonic), Hemitonic },
-            { nameof(Hemiolic), Hemiolic },
-            { nameof(Diminished), Diminished },
-            { nameof(Augmented), Augmented },
-            { nameof(Harmonic), Harmonic },
-            { nameof(Biseptimal), Biseptimal },
-            { nameof(Paleochromatic), Paleochromatic },
-            { nameof(Enigmatic), Enigmatic },
-            { nameof(DoubleHarmonic), DoubleHarmonic },
-            { nameof(Neapolitan), Neapolitan },
-            { nameof(Hungarian), Hungarian },
-            { nameof(Persian), Persian },
-            { nameof(Romanian), Romanian },
+            { ScaleName.Diatonic, Diatonic },
+            { ScaleName.Altered, Altered },
+            { ScaleName.Hemitonic, Hemitonic },
+            { ScaleName.Hemiolic, Hemiolic },
+            { ScaleName.Diminished, Diminished },
+            { ScaleName.Augmented, Augmented },
+            { ScaleName.Harmonic, Harmonic },
+            { ScaleName.Biseptimal, Biseptimal },
+            { ScaleName.Paleochromatic, Paleochromatic },
+            { ScaleName.Enigmatic, Enigmatic },
+            { ScaleName.DoubleHarmonic, DoubleHarmonic },
+            { ScaleName.Neapolitan, Neapolitan },
+            { ScaleName.Hungarian, Hungarian },
+            { ScaleName.Persian, Persian },
+            { ScaleName.Romanian, Romanian },
 
             // Octatonic Scales
-            { nameof(Major6Diminished), Major6Diminished },
-            { nameof(Minor6Diminished), Minor6Diminished },
-            { nameof(Dominant7Diminished), Dominant7Diminished },
-            { nameof(Dominant7b5Diminished), Dominant7b5Diminished },
-            { nameof(SymmetricalDiminished), SymmetricalDiminished },
+            { ScaleName.Major6Diminished, Major6Diminished },
+            { ScaleName.Minor6Diminished, Minor6Diminished },
+            { ScaleName.Dominant7Diminished, Dominant7Diminished },
+            { ScaleName.Dominant7b5Diminished, Dominant7b5Diminished },
+            { ScaleName.SymmetricalDiminished, SymmetricalDiminished },
 
             // Hexatonic Scales
-            { nameof(WholeTone), WholeTone },
-            { nameof(SymmetricalAugmented), SymmetricalAugmented },
-            { nameof(MajorHexatonic), MajorHexatonic },
-            { nameof(Prometheus), Prometheus },
+            { ScaleName.WholeTone, WholeTone },
+            { ScaleName.SymmetricalAugmented, SymmetricalAugmented },
+            { ScaleName.MajorHexatonic, MajorHexatonic },
+            { ScaleName.Prometheus, Prometheus },
 
             // Pentatonic Scales
-            { nameof(MajorPentatonic), MajorPentatonic }
+            { ScaleName.MajorPentatonic, MajorPentatonic }
         };
 
 }

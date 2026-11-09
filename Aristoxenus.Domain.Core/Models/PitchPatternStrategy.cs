@@ -1,4 +1,5 @@
-﻿using Aristoxenus.Domain.Core.Interfaces;
+﻿using Aristoxenus.Domain.Core.Enums;
+using Aristoxenus.Domain.Core.Interfaces;
 
 namespace Aristoxenus.Domain.Core.Models;
 

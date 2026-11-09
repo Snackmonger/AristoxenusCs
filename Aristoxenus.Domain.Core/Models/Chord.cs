@@ -31,40 +31,40 @@ namespace Aristoxenus.Domain.Core.Models
         public NoteName RootName => Name.Root;
 
 
-        public List<Pitch> AscendingArpeggio 
+        public List<Pitch> AscendingArpeggio
         {
             get
-        {
-            Pitch rootPitch = new(RootName, OctaveNumber);
-            List<Pitch> pitches = [.. Name.Intervals.Sorted.Select(rootPitch.GetPitchAbove)];
-            int inversion = Inversion % pitches.Count;
-            while (inversion > 0)
             {
-                Pitch lowestPitch = pitches[0];
-                pitches.RemoveAt(0);
-                pitches.Add(lowestPitch.GetPitchAbove(Interval.Octave));
-                inversion--;
-            }
-
-            for (int i = 1; i < pitches.Count; i++)
-            {
-                Pitch previous = pitches[i - 1];
-                Pitch current = pitches[i];
-                if (current.Value <= previous.Value)
+                Pitch rootPitch = new(RootName, OctaveNumber);
+                List<Pitch> pitches = [.. Name.Intervals.Sorted.Select(rootPitch.GetPitchAbove)];
+                int inversion = Inversion % pitches.Count;
+                while (inversion > 0)
                 {
-                    pitches[i] = current.GetPitchAbove(Interval.Octave);
+                    Pitch lowestPitch = pitches[0];
+                    pitches.RemoveAt(0);
+                    pitches.Add(lowestPitch.GetPitchAbove(Interval.Octave));
+                    inversion--;
                 }
-            }
 
-            foreach (int displacedIndex in Voicing.DisplacedIntervalIndices)
-            {
-                Pitch displacedPitch = pitches[displacedIndex];
-                pitches.RemoveAt(displacedIndex);
-                pitches.Add(displacedPitch.GetPitchAbove(Interval.Octave));
-            }
+                for (int i = 1; i < pitches.Count; i++)
+                {
+                    Pitch previous = pitches[i - 1];
+                    Pitch current = pitches[i];
+                    if (current.Value <= previous.Value)
+                    {
+                        pitches[i] = current.GetPitchAbove(Interval.Octave);
+                    }
+                }
 
-            return pitches;
-        }
+                foreach (int displacedIndex in Voicing.DisplacedIntervalIndices)
+                {
+                    Pitch displacedPitch = pitches[displacedIndex];
+                    pitches.RemoveAt(displacedIndex);
+                    pitches.Add(displacedPitch.GetPitchAbove(Interval.Octave));
+                }
+
+                return pitches;
+            }
         }
 
 

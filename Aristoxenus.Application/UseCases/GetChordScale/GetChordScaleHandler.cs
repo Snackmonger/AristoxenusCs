@@ -21,9 +21,9 @@ public class GetChordScaleHandler : IRequestHandler<GetChordScaleRequest, Result
             var scaleNoteNames = intervals.Select(tonicName.NoteNameAbove).ToList();
 
             List<ChordName> chordNames = [];
-            for (int i = 1; i < scaleNoteNames.Count + Numbers.IndexOffset; i++)
+            for (int i = 0; i < scaleNoteNames.Count; i++)
             {
-                chordNames.Add(new(scaleNoteNames[i], intervals.Rotate(i).Chordify(new(request.Structure, request.NumberOfNotes))));
+                chordNames.Add(new(scaleNoteNames[i], intervals.Rotate(i + Numbers.IndexOffset).Chordify(new(request.Structure, request.NumberOfNotes))));
             }
 
             List<string> noteNames = [.. scaleNoteNames];

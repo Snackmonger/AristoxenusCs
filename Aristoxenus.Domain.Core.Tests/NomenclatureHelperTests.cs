@@ -1,5 +1,4 @@
-﻿using Aristoxenus.Domain.Core.Models;
-using Aristoxenus.Domain.Core.Utilities;
+﻿using Aristoxenus.Domain.Core.Utilities;
 
 namespace Aristoxenus.Domain.Core.Tests;
 
@@ -416,7 +415,7 @@ public sealed class NomenclatureHelperTests
     [DataRow([new[] { "B#", "C##", "D##", "E#", "F##", "G##", "A##" }, "B#", new[] { 0, 2, 4, 5, 7, 9, 11 }])]
     [DataRow([new[] { "Cb", "Db", "Eb", "Fb", "Gb", "Ab", "Bb" }, "Cb", new[] { 0, 2, 4, 5, 7, 9, 11 }])]
     [DataRow([new[] { "D", "E", "F#", "G", "Ab", "Bb", "C#" }, "D", new[] { 0, 2, 4, 5, 6, 8, 11 }])]
-    [DataRow([new[] { "A", "B", "C", "D#", "E", "F#", "G#"}, "A", new[] { 0, 2, 3, 6, 7, 9, 11 }])]
+    [DataRow([new[] { "A", "B", "C", "D#", "E", "F#", "G#" }, "A", new[] { 0, 2, 3, 6, 7, 9, 11 }])]
     public void CalculateHeptatonicNames_ValidValues_CorrectOutputs(string[] expectedNoteNames, string noteNameSymbol, int[] pattern)
     {
         var result = NomenclatureHelper.CalculateHeptatonicNames(SymbolHelper.ParseNoteNameSymbol(noteNameSymbol), pattern);
@@ -441,7 +440,7 @@ public sealed class NomenclatureHelperTests
 
         var result = NomenclatureHelper.FlipBinomial(note.pitchClass, note.accidentals);
         string actualNoteName = SymbolHelper.CreateNoteNameSymbol(result);
-        
+
         Assert.AreEqual(expectedNoteName, actualNoteName);
     }
 

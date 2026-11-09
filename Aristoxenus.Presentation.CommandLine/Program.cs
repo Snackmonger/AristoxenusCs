@@ -1,11 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-
-using Spectre.Console.Cli;
-
-using Aristoxenus.Application;
-
+﻿using Aristoxenus.Application;
 using Aristoxenus.Presentation.CommandLine.SpectreBridge;
 using Aristoxenus.Presentation.CommandLine.SpectreCommands;
+using Microsoft.Extensions.DependencyInjection;
+using Spectre.Console.Cli;
 
 var services = new ServiceCollection();
 services.AddLogging();

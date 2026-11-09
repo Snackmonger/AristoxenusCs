@@ -1,4 +1,5 @@
 ﻿using Aristoxenus.Domain.Core.Bases;
+using Aristoxenus.Domain.Core.Enums;
 
 namespace Aristoxenus.Domain.Core.Models;
 

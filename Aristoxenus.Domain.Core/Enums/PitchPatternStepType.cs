@@ -1,4 +1,4 @@
-﻿namespace Aristoxenus.Domain.Core.Models
+﻿namespace Aristoxenus.Domain.Core.Enums
 {
     public enum PitchPatternStepType
     {
