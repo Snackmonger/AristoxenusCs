@@ -3,7 +3,7 @@ using System.Collections;
 
 namespace Aristoxenus.Domain.Core.Models
 {
-    public class Melody() : ICollection<IHasDuration>
+    public class InMemoryMelody() : IMelody
     {
         private readonly List<IHasDuration> _durationHavingObjects = [];
         public Duration DefaultDuration = Duration.Quarter;
@@ -13,7 +13,7 @@ namespace Aristoxenus.Domain.Core.Models
 
         public bool IsReadOnly => false;
 
-        public Melody WithDefaultDuration(Duration duration)
+        public IMelody WithDefaultDuration(Duration duration)
         {
             DefaultDuration = duration;
             return this;
@@ -116,31 +116,31 @@ namespace Aristoxenus.Domain.Core.Models
             _durationHavingObjects.Add(note);
         }
 
-        public Melody With(IEnumerable<Pitch> pitches)
+        public IMelody With(IEnumerable<Pitch> pitches)
         {
             Add(pitches);
             return this;
         }
 
-        public Melody With(IEnumerable<Pitch> pitches, Duration duration)
+        public IMelody With(IEnumerable<Pitch> pitches, Duration duration)
         {
             Add(pitches, duration);
             return this;
         }
 
-        public Melody With(Pitch pitch)
+        public IMelody With(Pitch pitch)
         {
             Add(pitch, DefaultDuration);
             return this;
         }
 
-        public Melody With(Duration rest)
+        public IMelody With(Duration rest)
         {
             Add(rest);
             return this;
         }
 
-        public Melody With(IHasDuration note)
+        public IMelody With(IHasDuration note)
         {
             Add(note);
             return this;

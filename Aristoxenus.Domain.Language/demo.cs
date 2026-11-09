@@ -1,16 +1,16 @@
 ﻿
 
+using Aristoxenus.Domain.Core.Interfaces;
 using Aristoxenus.Domain.Core.Models;
 
 namespace Aristoxenus.Domain.Language;
 
-public class Thing
+public class DslDemo
 {
 
-    public static int Run(Scale scale)
+    public static int Run(Scale scale, IMelody melody)
     {
 
-        Melody melody = [];
         melody.WithDefaultDuration(Duration.Quarter);
         var config = new ChordScaleDerivation(ChordStructure.Tertial, ChordNumberOfNotes.Tetrad);
         
