@@ -25,7 +25,7 @@ public class Scale : ValueObject
 
     }
 
-    public IEnumerable<Chord> GetChordScale(ChordScaleDerivation config, int startInOctave)
+    public List<Chord> GetChords(ChordScaleDerivation config, int startInOctave)
     {
         throw new NotImplementedException();
     }
@@ -36,7 +36,7 @@ public class Scale : ValueObject
         return [.. Intervals.Select(tonic.GetPitchAbove)];
     }
 
-    public List<ChordName> GetChordScaleNames(ChordScaleDerivation config)
+    public List<ChordName> GetChordNames(ChordScaleDerivation config)
     {
         throw new NotImplementedException();
     }
