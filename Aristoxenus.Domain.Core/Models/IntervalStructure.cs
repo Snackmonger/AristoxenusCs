@@ -281,7 +281,7 @@ public class IntervalStructure : ValueObject, IReadOnlySet<Interval>, ISymbolSer
     protected override IEnumerable<object?> GetEqualityComponents()
     {
         foreach ((int, int) interval in NomenclatureHelper
-            .SortIntervalNames(Intervals.Select(it => (it.Degree, it.Accidental)))
+            .SortDegreeNames(Intervals.Select(it => (it.Degree, it.Accidental)))
         )
         {
             yield return interval;

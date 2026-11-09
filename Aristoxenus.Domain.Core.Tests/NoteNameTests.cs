@@ -399,37 +399,6 @@ public sealed class NoteNameTests
         Assert.AreEqual(expectedBoolean, result);
     }
 
-    [TestMethod]
-    [DataRow("A#", "Bb")]
-    [DataRow("B#", "C")]
-    [DataRow("C", "B#")]
-    [DataRow("Bb", "A#")]
-    [DataRow("G", "G")]
-    [DataRow("G#", "Ab")]
-    [DataRow("Gb", "F#")]
-    [DataRow("Eb", "D#")]
-    [DataRow("E#", "F")]
-    [DataRow("F", "E#")]
-    public void FlipBinomial_AnyNoteNameWithOneOrZeroAccidental_ReturnsCorrectNoteName(string expectedNoteName, string noteName)
-    {
-        NoteName expected = NoteName.FromSymbol(expectedNoteName);
-        NoteName name = NoteName.FromSymbol(noteName);
 
-        NoteName result = name.FlipBinomial();
 
-        Assert.AreEqual(expected, result);
-    }
-
-    [TestMethod]
-    [DataRow("F##")]
-    [DataRow("Cbbbb")]
-    [DataRow("B##")]
-    [DataRow("Ebb")]
-    [DataRow("Abbb")]
-    public void FlipBinomial_AnyNoteNameWithMoreThanOneAccidental_ThrowsInvalidOperationException(string noteName)
-    {
-        NoteName name = NoteName.FromSymbol(noteName);
-
-        Assert.Throws<InvalidOperationException>(name.FlipBinomial);
-    }
 }

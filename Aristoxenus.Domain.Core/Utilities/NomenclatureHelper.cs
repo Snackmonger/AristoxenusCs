@@ -9,15 +9,6 @@ using NoteName = (int PitchClass, int Accidental);
 public static class NomenclatureHelper
 {
 
-    /**
-     * Get a sort value for the given interval name, which is a decimal 
-     * representation of the interval's degree and accidental.
-     * 
-     * E.g. 5 == 5.0, b5 == 4.9, #5 == 5.1, ##5 == 5.2, etc.
-     */
-    public static double GetIntervalSortValue(DegreeName interval)
-        => interval.Degree + (interval.Accidental * 0.1);
-
     /// <summary>
     /// Create a new interval degree name with the degree named as given, plus 
     /// as many accidentals as necessary to provide the expected value.
@@ -238,14 +229,6 @@ public static class NomenclatureHelper
     /// <summary>
     /// Sort the given scale degree names.
     /// </summary>
-    public static List<DegreeName> SortIntervalNames(IEnumerable<DegreeName> scaleDegrees)
-    {
-        var d = scaleDegrees.ToList();
-        d.Sort((left, right) => GetIntervalSortValue(left).CompareTo(GetIntervalSortValue(right)));
-        return d;
-    }
-
-
     public static List<DegreeName> SortDegreeNames(IEnumerable<DegreeName> degreeNames)
     {
         List<DegreeName> result = [.. degreeNames];
@@ -253,7 +236,14 @@ public static class NomenclatureHelper
         return result;
     }
 
-
+    /**
+     * Compare two degree names for sorting.
+     * 
+     * The sort value for the given interval name is a decimal 
+     * representation of the interval's degree and accidental.
+     * 
+     * E.g. 5 == 5.0, b5 == 4.9, #5 == 5.1, ##5 == 5.2, etc.
+     */
     public static int CompareDegreeNames(DegreeName left, DegreeName right)
     {
         double lValue = left.Degree + (left.Accidental * 0.1);
