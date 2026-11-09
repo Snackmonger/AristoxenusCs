@@ -11,7 +11,6 @@ public static partial class SymbolHelper
     /// </summary>
     /// <param name="chordSymbol">A chord symbol, with or without a 
     /// root symbol (i.e. e.g. either "Cmaj7#11" or "maj7#11").</param>
-    /// <returns></returns>
     /// <exception cref="InvalidAsSymbol">If the symbol cannot be parsed.
     /// </exception>
     public static HashSet<(int, int)> ParseChordSymbol(string chordSymbol)
@@ -26,13 +25,18 @@ public static partial class SymbolHelper
         // Order accidental symbols for maximal munch, with empty
         // string (bare interval) as the last element.
         // This handles absurd chord names, e.g. Cmaj7add###11.
-        IReadOnlyList<string> accidentalCombinations = (
-            from accidentalSymbol in new[] { Symbols.Sharp, Symbols.Flat }
-            from repetitions in Enumerable.Range(1, Numbers.SemitonesInOctave - Numbers.IndexOffset).Reverse()
-            select string.Concat(Enumerable.Repeat(accidentalSymbol, repetitions))
-        )
-            .Append(string.Empty)
-            .ToList();
+        //
+        // NOTE: 2 accidental symbol types * 11 semitones = 22 string concatenations.
+        IReadOnlyList<string> accidentalCombinations =
+        [
+            .. (
+                        from accidentalSymbol in new[] { Symbols.Sharp, Symbols.Flat }
+                        from repetitions in Enumerable.Range(1, Numbers.SemitonesInOctave - Numbers.IndexOffset).Reverse()
+                        select string.Concat(Enumerable.Repeat(accidentalSymbol, repetitions))
+                    )
+,
+            string.Empty,
+        ];
 
         // Regex sorts elements into four categories.
         //
@@ -210,6 +214,8 @@ public static partial class SymbolHelper
                 if (modifications == string.Empty)
                     break;
 
+                // NOTE: n = 22, which already had to be concatenated earlier.
+                // Maybe a stringbuilder here would be better.
                 foreach (string accidental in accidentalCombinations)
                 {
                     string interval = accidental + number.ToString();
@@ -285,9 +291,10 @@ public static partial class SymbolHelper
 
         // Load default (empty) symbols for the chord symbol elements.
         // This is total set of suffixes that might be added to a note name
-        // to form a chord symbol. Only a subset of suffixes can appear
-        // in any given symbol. The order is designed to make chord symbols
-        // (including those for exotic chords) easier to read.
+        // to form a chord symbol. Only a subset of suffixes can actually
+        // appear in a single symbol. The order is designed to make chord
+        // symbols (including those representing exotic chords) easier to
+        // read.
         string normal3 = string.Empty;
         string primary = string.Empty;
         string secondary = string.Empty;
@@ -381,7 +388,7 @@ public static partial class SymbolHelper
         if (Third is (int, int) n)
         {
             // Dominant and diminished chords do not have a symbol
-            // for thier third.
+            // for their third.
             if (!(IsDiminished || IsDominant))
             {
                 // Major chord:
@@ -530,7 +537,7 @@ public static partial class SymbolHelper
         // Altered Extensions: Any extension with an accidental does not need
         // an "add" symbol (and if anything is harder to read if it has one,
         // e.g. C7#11 vs C7add#11).
-        extensions = string.Join(string.Empty, NomenclatureHelper.SortIntervalNames(remaining.Where(s => s != (1, 0))));
+        extensions = string.Join(string.Empty, NomenclatureHelper.SortDegreeNames(remaining.Where(s => s != (1, 0))));
 
         ///////////////////////////////////////////////////////////////////////
         // Final Symbol:

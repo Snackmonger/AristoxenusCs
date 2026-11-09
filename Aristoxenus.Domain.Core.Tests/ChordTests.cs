@@ -37,7 +37,7 @@ namespace Aristoxenus.Domain.Core.Tests
             
             var chord = ChordName.FromSymbol(chordSymbol).Reify(inversion, 4);
             
-            var arpeggio = chord.AscendingArpeggio();
+            var arpeggio = chord.AscendingArpeggio;
             List<Pitch> pitches = [..expectedPitches.Select(Pitch.FromSymbol)];
             CollectionAssert.AreEqual(pitches, arpeggio);
         }

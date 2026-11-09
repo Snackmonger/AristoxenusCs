@@ -1,4 +1,5 @@
-﻿using Aristoxenus.Domain.Core.Utilities;
+﻿using Aristoxenus.Domain.Core.Models;
+using Aristoxenus.Domain.Core.Utilities;
 
 namespace Aristoxenus.Domain.Core.Tests;
 
@@ -422,4 +423,39 @@ public sealed class NomenclatureHelperTests
         var names = expectedNoteNames.Select(SymbolHelper.ParseNoteNameSymbol).ToList();
         CollectionAssert.AreEqual(names, result);
     }
+
+    [TestMethod]
+    [DataRow("A#", "Bb")]
+    [DataRow("B#", "C")]
+    [DataRow("C", "B#")]
+    [DataRow("Bb", "A#")]
+    [DataRow("G", "G")]
+    [DataRow("G#", "Ab")]
+    [DataRow("Gb", "F#")]
+    [DataRow("Eb", "D#")]
+    [DataRow("E#", "F")]
+    [DataRow("F", "E#")]
+    public void FlipBinomial_AnyNoteNameWithOneOrZeroAccidental_ReturnsCorrectNoteName(string expectedNoteName, string noteName)
+    {
+        (int pitchClass, int accidentals) note = SymbolHelper.ParseNoteNameSymbol(noteName);
+
+        var result = NomenclatureHelper.FlipBinomial(note.pitchClass, note.accidentals);
+        string actualNoteName = SymbolHelper.CreateNoteNameSymbol(result);
+        
+        Assert.AreEqual(expectedNoteName, actualNoteName);
+    }
+
+    [TestMethod]
+    [DataRow("F##")]
+    [DataRow("Cbbbb")]
+    [DataRow("B##")]
+    [DataRow("Ebb")]
+    [DataRow("Abbb")]
+    public void FlipBinomial_AnyNoteNameWithMoreThanOneAccidental_ThrowsInvalidOperationException(string noteName)
+    {
+        (int pitchClass, int accidentals) note = SymbolHelper.ParseNoteNameSymbol(noteName);
+
+        Assert.Throws<InvalidOperationException>(() => NomenclatureHelper.FlipBinomial(note.pitchClass, note.accidentals));
+    }
+
 }
