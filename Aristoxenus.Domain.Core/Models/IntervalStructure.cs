@@ -155,6 +155,12 @@ public class IntervalStructure : ValueObject, IReadOnlySet<Interval>, ISymbolSer
         return CreateNew(scaleDegrees);
     }
 
+    public IntervalStructure Rotate(int newStartingDegree)
+    {
+        var modalRotation = PatternHelper.GetModeOfIntervalPattern(Sorted.Select(i => i.Value), newStartingDegree);
+        return CreateAsScale(modalRotation);
+    }
+
     /// <summary> 
     /// Derive the interval structure of a chord from this interval structure, 
     /// using the provided derivation configuration.
@@ -233,10 +239,7 @@ public class IntervalStructure : ValueObject, IReadOnlySet<Interval>, ISymbolSer
     /// used for chords, but this can be a shorthand for scale names as well.
     /// </summary>
     public string ToChordSymbol()
-        => SymbolHelper.CreateChordSymbol(
-                Intervals.Select(i => (i.Degree, i.Accidental)),
-                style: null
-            );
+        => SymbolHelper.CreateChordSymbol(Intervals.Select(i => (i.Degree, i.Accidental)), style: null);
 
     /// <summary>
     /// Parse a chord symbol into its implied intervals.

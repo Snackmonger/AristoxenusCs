@@ -6,6 +6,7 @@ using Spectre.Console.Cli;
 
 using Aristoxenus.Application.UseCases.GetChordScale;
 using Aristoxenus.Domain.Core.Data;
+using Aristoxenus.Domain.Core.Models;
 
 namespace Aristoxenus.Presentation.CommandLine.SpectreCommands;
 
@@ -36,7 +37,7 @@ public class GetChordScaleCommand(IMediator mediator) : AsyncCommand<GetChordSca
 
     protected override async Task<int> ExecuteAsync(CommandContext context, ProfileScaleCommandSettings settings, CancellationToken cancellationToken)
     {
-        var request = new GetChordScaleRequest(settings.NoteName, settings.ScaleName, settings.ModeNumber, settings.NumberOfChordTones);
+        var request = new GetChordScaleRequest(settings.NoteName, settings.ScaleName, settings.ModeNumber, (ChordNumberOfNotes)settings.NumberOfChordTones, ChordStructure.Tertial); // TODO: Hacky just for quick testing. 
         var response = await mediator.Send(request, cancellationToken);
         int exitCode;
         if (response.IsSuccess)

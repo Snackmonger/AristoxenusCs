@@ -1,14 +1,16 @@
 ﻿
 
+using Aristoxenus.Domain.Core.Models;
 using FluentResults;
 using MediatR;
 
 namespace Aristoxenus.Application.UseCases.GetChordScale;
 
 public record GetChordScaleRequest(
-    string NoteName, 
+    string TonicNoteName, 
     string ScaleName, 
     int ModeNumber, 
-    int NumberOfChordTones
+    ChordNumberOfNotes NumberOfNotes,
+    ChordStructure Structure
 ) : IRequest<Result<GetChordScaleResponse>>;
 

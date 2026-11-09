@@ -14,7 +14,7 @@ public class DslDemo
         melody.WithDefaultDuration(Duration.Quarter);
         var config = new ChordScaleDerivation(ChordStructure.Tertial, ChordNumberOfNotes.Tetrad);
         
-        var chordScale = scale.GetChordScale(config, startInOctave: 4);
+        var chordScale = scale.GetChords(config, startInOctave: 4);
         bool even = false;
 
         // Ascending arpeggios, derived from the passed scale, but every
